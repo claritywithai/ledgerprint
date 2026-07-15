@@ -1,0 +1,27 @@
+# LedgerPrint
+
+> LedgerPrint is a free, browser-only audit analytics toolkit for auditors and accountants. It runs entirely client-side — files are parsed in the browser tab and never uploaded to a server. Built by Muhammad Faisal Gurmani (CA Finalist).
+
+## What it does
+- Benford's Law digital analysis: first-digit, second-digit, first-two-digit, and last-two-digit tests, each scored with chi-square, p-value, and Nigrini's Mean Absolute Deviation (MAD) conformity scale.
+- Round-number / trailing-zero analysis to detect estimated or fabricated amounts.
+- Threshold / structuring detection: flags amounts clustering just under a chosen approval limit.
+- Duplicate-amount screening (Nigrini's number duplication test).
+- Second-order (digit-difference) test on sorted transaction gaps.
+- Document number sequence / gap testing: detects missing and duplicated invoice, cheque, or voucher numbers, with prefix-aware parsing.
+- Monetary Unit Sampling (MUS): Poisson reliability-factor sample size calculator plus a systematic sample puller with risk-based (judgmental) additions for round amounts, top-value outliers, duplicated amounts, and weekend/period-end postings.
+- Planning materiality calculator with standard benchmark ranges (revenue, assets, equity, etc.), which can feed directly into the MUS sampling tolerable-misstatement field.
+- Ratio and trend analytical review (horizontal/vertical analysis) with variance flagging.
+- Printable audit workpaper with firm/client/preparer/reviewer/partner sign-off fields, and a combined "export full report" covering every test.
+
+## Who it's for
+Small and mid-sized audit firms, sole practitioners, and internal audit teams who need ISA 240–aligned digital analysis and MUS sampling without a five-figure CAAT suite subscription (IDEA, ACL/Galvanize, etc.).
+
+## Key facts
+- 100% client-side: no file upload, no account, no cost.
+- Accepts CSV and Excel (.xlsx, .xls).
+- Every test result includes an explicit disclaimer that digital analysis is a risk indicator under ISA 240, not proof of fraud on its own.
+
+## Links
+- [LedgerPrint tool](https://ledgerprint.pages.dev/): the live application
+- [Muhammad Faisal Gurmani / Clarity With AI](https://www.claritywithai.org): creator's site, AI education for finance and accounting professionals

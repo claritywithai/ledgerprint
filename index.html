@@ -1,0 +1,3014 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- ================= SEO ================= -->
+<!-- NOTE: placeholder domain below is ledgerprint.pages.dev — replace every
+     occurrence of that with your real custom domain once one is attached
+     to the Cloudflare Pages project. Search this file for "ledgerprint.pages.dev". -->
+<title>LedgerPrint — Free Audit Analytics & Benford's Law Toolkit</title>
+<meta name="description" content="Free browser-based audit analytics: Benford's Law, structuring & duplicate tests, MUS sampling, materiality calculator, ratio analysis. No upload, no signup.">
+<meta name="keywords" content="Benford's Law calculator, audit fraud detection tool, free CAAT software, journal entry testing, ISA 240 tool, forensic accounting tool, digital analysis audit, round number test audit, structuring test threshold audit, monetary unit sampling calculator, audit sample size calculator, invoice sequence gap test, missing invoice number test, audit materiality calculator, performance materiality calculator, ratio analysis audit, analytical review tool, horizontal vertical analysis calculator">
+<link rel="canonical" href="https://ledgerprint.pages.dev/">
+<meta name="robots" content="index, follow, max-image-preview:large">
+<meta name="author" content="Muhammad Faisal Gurmani">
+
+<!-- Open Graph -->
+<meta property="og:type" content="website">
+<meta property="og:title" content="LedgerPrint — Free CAAT Toolkit for Auditors">
+<meta property="og:description" content="Benford's Law, round-number, and structuring tests for journal entries. Free, browser-only, zero data upload. Built for small audit firms.">
+<meta property="og:url" content="https://ledgerprint.pages.dev/">
+<meta property="og:site_name" content="LedgerPrint">
+<!-- TODO: add og:image (1200x630px) once you have a preview graphic — social
+     shares without one get a plain link card instead of a rich preview. -->
+
+<!-- Twitter -->
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LedgerPrint — Free CAAT Toolkit for Auditors">
+<meta name="twitter:description" content="Benford's Law, round-number, and structuring tests for journal entries. Free, browser-only, zero data upload.">
+
+<!-- llms.txt discovery hint — not an official meta tag, but several AI
+     crawlers and directory tools now check for this <link> before falling
+     back to guessing /llms.txt exists. Harmless if ignored. -->
+<link rel="llms.txt" href="/llms.txt">
+
+<!-- Structured data: SoftwareApplication -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "SoftwareApplication",
+  "name": "LedgerPrint",
+  "url": "https://ledgerprint.pages.dev/",
+  "applicationCategory": "BusinessApplication",
+  "applicationSubCategory": "Audit Analytics / CAAT Software",
+  "operatingSystem": "Any (runs in web browser)",
+  "description": "A free, browser-based audit analytics toolkit for auditors and accountants: Benford's Law (first digit, second digit, first-two-digits), round-number analysis, threshold/structuring detection, duplicate-amount screening, document number sequence/gap testing, and a monetary unit sampling (MUS) sample size calculator with systematic sample puller. Tests journal entries, vendor payments, and expense claims for anomalies associated with fraud risk. Processes data entirely client-side with no upload.",
+  "author": { "@type": "Person", "name": "Muhammad Faisal Gurmani", "jobTitle": "CA Finalist", "url": "https://www.claritywithai.org" },
+  "publisher": { "@type": "Organization", "name": "Muhammad Faisal Gurmani", "url": "https://www.claritywithai.org" },
+  "sameAs": ["https://www.claritywithai.org"],
+  "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" },
+  "featureList": "First-digit Benford test, second-digit test, first-two-digit test, last-two-digit uniform-distribution test, round-number analysis, threshold/structuring detection, chi-square goodness of fit, Nigrini MAD conformity scale, duplicate-amount detection, second-order (digit-difference) test, document number sequence/gap testing, monetary unit sampling (MUS) sample size calculator, systematic MUS sample puller, risk-based judgmental sample selection, planning and performance materiality calculator, ratio and trend analytical review, reviewer and partner sign-off on printed workpaper, client-side CSV/Excel parsing, per-test CSV export, printable audit workpaper export"
+}
+</script>
+
+
+<!-- Structured data: FAQPage -->
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "FAQPage",
+  "mainEntity": [
+    {
+      "@type": "Question",
+      "name": "What is Benford's Law and how does it detect fraud?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Benford's Law predicts that in most naturally occurring financial datasets, the digit 1 appears as the leading digit about 30% of the time, decreasing down to digit 9 at under 5%. When someone fabricates or rounds numbers, this natural pattern breaks down. Auditors compare a client's actual digit distribution against the Benford curve to flag populations that warrant closer inspection." }
+    },
+    {
+      "@type": "Question",
+      "name": "Is LedgerPrint really free, and does my data leave my browser?",
+      "acceptedAnswer": { "@type": "Answer", "text": "Yes. LedgerPrint runs entirely client-side using JavaScript in your browser tab. Your file is parsed locally and never uploaded to any server. There is no account, no tracking of the data itself, and no cost." }
+    },
+    {
+      "@type": "Question",
+      "name": "What does MAD and conformity mean in the results?",
+      "acceptedAnswer": { "@type": "Answer", "text": "MAD (Mean Absolute Deviation) measures how far your data's actual digit frequencies are from Benford's expected frequencies. Nigrini's scale for the first digit is: under 0.006 close conformity, up to 0.012 acceptable, up to 0.015 marginal, and above 0.015 nonconformity that may warrant follow-up. The second-digit and first-two-digits tests use their own, tighter thresholds, and LedgerPrint scores each test independently." }
+    },
+    {
+      "@type": "Question",
+      "name": "Can Benford's Law prove fraud on its own?",
+      "acceptedAnswer": { "@type": "Answer", "text": "No. Benford's Law is a risk-indicator test, not proof of fraud. ISA 240 treats digital analysis as one input into professional judgment. A flagged population calls for follow-up procedures such as inquiry and vouching, not a standalone conclusion. Small, homogeneous, or narrow-range datasets can also fail the test without any wrongdoing." }
+    },
+    {
+      "@type": "Question",
+      "name": "What file formats does LedgerPrint accept?",
+      "acceptedAnswer": { "@type": "Answer", "text": "CSV and Excel (.xlsx, .xls) files. Any general ledger export, vendor payment list, or expense claim register with a numeric amount column will work." }
+    }
+  ]
+}
+</script>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js" integrity="sha512-dfX5uYVXzyU8+KHqj8bjo7UkOdg18PaOtpa48djpNbZHwExddghZ+ZmzWT06R5v6NSk3ZUfsH6FNEDepLx9hPQ==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+<!-- Resilience layer: if either CDN script fails to load (blocked network,
+     cdnjs outage, a bad/guessed integrity hash added later, ad-blocker, etc.)
+     the page must not fail silently — every prior "file upload doesn't work"
+     report traces back to Papa or XLSX being undefined with no visible error.
+     This checks both libraries after the page settles, retries once from a
+     second CDN (jsdelivr) if either is missing, and only then shows a clear
+     on-page banner + disables the dropzone, instead of a dead button. -->
+<script>
+(function(){
+  function showLibraryError(missing){
+    document.addEventListener('DOMContentLoaded', function(){
+      var dz = document.getElementById('dropzone');
+      var banner = document.createElement('div');
+      banner.setAttribute('role','alert');
+      banner.style.cssText = 'background:#f4e2dc;border:1.5px solid #a3402b;color:#a3402b;'
+        + 'font-family:IBM Plex Mono,monospace;font-size:13px;padding:12px 16px;'
+        + 'border-radius:3px;margin:0 0 16px;';
+      banner.textContent = 'File upload is unavailable right now: ' + missing.join(' and ')
+        + ' could not load from the CDN (this can happen on restricted networks or if a CDN is down). '
+        + 'Try refreshing, switching networks, or reloading in a few minutes.';
+      if(dz && dz.parentNode) dz.parentNode.insertBefore(banner, dz);
+      if(dz){ dz.style.pointerEvents = 'none'; dz.style.opacity = '0.5'; }
+    });
+  }
+  function loadFallback(src, cb){
+    var s = document.createElement('script');
+    s.src = src;
+    s.onload = cb;
+    s.onerror = function(){ cb(new Error('fallback failed: ' + src)); };
+    document.head.appendChild(s);
+  }
+  window.addEventListener('load', function(){
+    setTimeout(function(){
+      var needPapa = (typeof window.Papa === 'undefined');
+      var needXlsx = (typeof window.XLSX === 'undefined');
+      if(!needPapa && !needXlsx) return;
+      var pending = 0, missing = [];
+      function done(name, ok){
+        pending--;
+        if(!ok) missing.push(name);
+        if(pending === 0 && missing.length) showLibraryError(missing);
+      }
+      if(needPapa){
+        pending++;
+        loadFallback('https://cdn.jsdelivr.net/npm/papaparse@5.4.1/papaparse.min.js', function(err){
+          done('CSV parsing', !err && typeof window.Papa !== 'undefined');
+        });
+      }
+      if(needXlsx){
+        pending++;
+        loadFallback('https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js', function(err){
+          done('Excel parsing', !err && typeof window.XLSX !== 'undefined');
+        });
+      }
+    }, 300);
+  });
+})();
+</script>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Source+Serif+Pro:ital,wght@0,400;0,600;0,700;1,400&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+  :root{
+    --ledger: #dfe6d8;
+    --paper: #f4f7f0;
+    --ink: #161a15;
+    --ink-soft: #3d453a;
+    --forest: #24382c;
+    --forest-deep: #17251d;
+    --rule: #b7c4ab;
+    --flag: #a3402b;
+    --flag-soft: #e9d6cd;
+    --pass: #4c6b3f;
+    --pass-soft: #dbe6d2;
+    --gold: #8f7a35;
+    --mono: 'IBM Plex Mono', 'Courier New', monospace;
+    --serif: 'Source Serif Pro', Georgia, 'Times New Roman', serif;
+    --sans: 'IBM Plex Sans', Arial, sans-serif;
+    --ease: cubic-bezier(.22,.9,.32,1);
+  }
+
+  *{ box-sizing:border-box; }
+  html{ scroll-behavior: smooth; }
+  html,body{ margin:0; padding:0; }
+  body{
+    background: var(--ledger);
+    color: var(--ink);
+    font-family: var(--sans);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    background-image:
+      repeating-linear-gradient(to bottom, transparent 0px, transparent 31px, var(--rule) 31px, var(--rule) 32px),
+      url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='120' height='120'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/><feColorMatrix type='matrix' values='0 0 0 0 0  0 0 0 0 0  0 0 0 0 0  0 0 0 0.025 0'/></filter><rect width='100%25' height='100%25' filter='url(%23n)'/></svg>");
+    background-attachment: local, fixed;
+  }
+
+  a{ color: var(--forest); }
+
+  :focus-visible{
+    outline: 2.5px solid var(--gold);
+    outline-offset: 2px;
+  }
+
+  .sr-only{
+    position:absolute; width:1px; height:1px; padding:0; margin:-1px;
+    overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0;
+  }
+
+  .wrap{ max-width: 920px; margin: 0 auto; padding: 0 24px 120px; }
+
+  /* ---------- entrance animation system ---------- */
+  .reveal{
+    opacity: 0;
+    transform: translateY(14px);
+    animation: revealUp .7s var(--ease) forwards;
+  }
+  @keyframes revealUp{
+    to{ opacity:1; transform: translateY(0); }
+  }
+  .r1{ animation-delay: .05s; }
+  .r2{ animation-delay: .16s; }
+  .r3{ animation-delay: .30s; }
+  .r4{ animation-delay: .46s; }
+
+  @media (prefers-reduced-motion: reduce){
+    *, *::before, *::after{
+      animation-duration: 0.001ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.001ms !important;
+    }
+  }
+
+  /* ---------- site bar (back-link to main site) ---------- */
+  .site-bar{
+    display:flex; align-items:center; gap:8px; flex-wrap:wrap;
+    padding: 14px 0;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+  }
+  .site-bar .site-link{
+    font-weight:600;
+    color: var(--forest);
+    text-decoration:none;
+    border-bottom: 1px solid var(--forest);
+  }
+  .site-bar .site-link:hover{ color: var(--forest-deep); border-color: var(--forest-deep); }
+  .site-bar-sep{ color: var(--rule); }
+
+  .byline{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 10px 0 0;
+  }
+  .byline a{ color: var(--forest); }
+
+  /* ---------- header ---------- */
+  header{
+    padding: 56px 0 40px;
+    border-bottom: 3px double var(--forest);
+    margin-bottom: 48px;
+  }
+  .eyebrow{
+    font-family: var(--mono);
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 14px;
+    display:flex; align-items:center; gap:10px;
+  }
+  .eyebrow::before{ content:"✓"; color: var(--pass); font-weight:600; }
+  h1{
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: clamp(38px, 6vw, 58px);
+    margin: 0 0 6px;
+    color: var(--forest-deep);
+    letter-spacing: -0.01em;
+  }
+  .sub{
+    font-size: 17px;
+    color: var(--ink-soft);
+    max-width: 56ch;
+    margin: 12px 0 0;
+  }
+  .sub b{ color: var(--forest); }
+
+  /* ---------- hero: digit staircase ---------- */
+  .staircase{
+    display:flex;
+    align-items:flex-end;
+    gap: 2px;
+    height: 190px;
+    margin: 40px 0 8px;
+    padding: 0 2px;
+    border-bottom: 1px solid var(--forest);
+  }
+  .stair{
+    flex:1;
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:flex-end;
+    height:0%;
+    position:relative;
+    animation: growStair .9s var(--ease) forwards;
+  }
+  @keyframes growStair{
+    from{ height:0%; }
+    to{ height: var(--h); }
+  }
+  .stair .num{
+    font-family: var(--serif);
+    font-weight:700;
+    color: var(--forest);
+    line-height:1;
+    opacity:0;
+    animation: fadeIn .5s ease forwards;
+    animation-delay: inherit;
+  }
+  @keyframes fadeIn{ to{ opacity:1; } }
+  .stair .pct{
+    font-family: var(--mono);
+    font-size:11px;
+    color: var(--ink-soft);
+    margin-top:6px;
+    opacity:0;
+    animation: fadeIn .5s ease forwards;
+    animation-delay: inherit;
+  }
+  .stair-caption{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin-bottom: 48px;
+    letter-spacing: .02em;
+  }
+
+  /* ---------- sections ---------- */
+  section{ margin: 56px 0; }
+  .label-row{ display:flex; align-items:baseline; gap:12px; margin-bottom:18px; }
+  .tick-num{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--gold);
+    border: 1px solid var(--gold);
+    padding: 1px 7px;
+    border-radius: 2px;
+    flex-shrink:0;
+  }
+  h2{
+    font-family: var(--serif);
+    font-size: 24px;
+    margin:0;
+    color: var(--forest-deep);
+  }
+
+  /* ---------- workpaper details ---------- */
+  .workpaper-fields{
+    display:grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 14px;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 20px 24px;
+    margin-bottom: 20px;
+  }
+  .field label{
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--ink-soft);
+    display:block;
+    margin-bottom: 6px;
+  }
+  .field input{
+    width:100%;
+    font-family: var(--sans);
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 2px;
+  }
+  .field input:focus{ border-color: var(--forest); }
+  @media (max-width: 640px){ .workpaper-fields{ grid-template-columns: 1fr; } }
+
+  /* ---------- upload zone ---------- */
+  .dropzone{
+    background: var(--paper);
+    border: 2px dashed var(--rule);
+    border-radius: 3px;
+    padding: 44px 32px;
+    text-align:center;
+    cursor:pointer;
+    transition: border-color .2s ease, background .2s ease, transform .2s ease;
+  }
+  .dropzone:hover, .dropzone.drag{
+    border-color: var(--forest);
+    background: #fff;
+  }
+  .dropzone.drag{ transform: scale(1.01); }
+  .dropzone .icon{
+    font-family: var(--serif);
+    font-size: 34px;
+    color: var(--forest);
+    margin-bottom: 10px;
+    transition: transform .3s var(--ease);
+  }
+  .dropzone:hover .icon{ transform: translateY(-3px); }
+  .dropzone p{ margin: 4px 0; color: var(--ink-soft); }
+  .dropzone .filename{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--forest);
+    min-height: 18px;
+  }
+  input[type=file]{ display:none; }
+
+  .privacy-note{
+    display:flex; gap:10px; align-items:flex-start;
+    margin-top: 16px;
+    font-size: 13px;
+    color: var(--ink-soft);
+    font-family: var(--mono);
+  }
+  .privacy-note::before{ content:"✓"; color: var(--pass); flex-shrink:0; }
+
+  /* ---------- column picker ---------- */
+  .picker{
+    max-height: 0;
+    overflow: hidden;
+    opacity: 0;
+    margin-top: 0;
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    transition: max-height .5s var(--ease), opacity .4s ease, margin-top .5s var(--ease);
+  }
+  .picker.show{
+    max-height: 480px;
+    opacity: 1;
+    margin-top: 24px;
+    padding: 20px 24px;
+  }
+  .picker label{
+    font-family: var(--mono);
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: .08em;
+    color: var(--ink-soft);
+    display:block;
+    margin-bottom: 8px;
+  }
+  select{
+    font-family: var(--sans);
+    font-size: 15px;
+    padding: 9px 12px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 2px;
+    width: 100%;
+    max-width: 420px;
+  }
+  .col-preview{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    margin: 10px 0 0;
+    min-height: 16px;
+  }
+  .col-preview.warn{ color: var(--flag); }
+  .run-btn{
+    margin-top: 20px;
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 15px;
+    background: var(--forest);
+    color: var(--paper);
+    border: none;
+    padding: 13px 28px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background .15s ease, transform .1s ease;
+  }
+  .run-btn:hover{ background: var(--forest-deep); }
+  .run-btn:active{ transform: scale(.98); }
+  .run-btn:disabled{ background: var(--rule); cursor: not-allowed; }
+  .run-btn.loading::after{
+    content: "";
+    display:inline-block;
+    width:12px; height:12px;
+    margin-left:8px;
+    border: 2px solid rgba(244,247,240,.4);
+    border-top-color: var(--paper);
+    border-radius:50%;
+    vertical-align: middle;
+    animation: spin .7s linear infinite;
+  }
+  @keyframes spin{ to{ transform: rotate(360deg); } }
+
+  /* ---------- results ---------- */
+  #results{
+    display:none;
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  #results.show{
+    display:block;
+    animation: revealUp .6s var(--ease) forwards;
+  }
+
+  .verdict{
+    display:flex;
+    align-items:center;
+    gap: 22px;
+    padding: 22px 26px;
+    border-left: 4px solid var(--pass);
+    background: var(--pass-soft);
+    margin-bottom: 32px;
+    box-shadow: 0 1px 0 rgba(22,26,21,.03), 0 6px 16px -10px rgba(22,26,21,.25);
+    transition: border-color .3s ease, background .3s ease;
+  }
+  .verdict.flagged{ border-left-color: var(--flag); background: var(--flag-soft); }
+  .verdict .mark{
+    flex-shrink: 0;
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: 2px solid var(--pass);
+    display:flex; align-items:center; justify-content:center;
+    font-family: var(--mono);
+    font-weight: 600;
+    font-size: 10px;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    color: var(--pass);
+    transform: rotate(-8deg);
+    position: relative;
+  }
+  .verdict .mark::before{
+    content:"";
+    position:absolute;
+    inset: 4px;
+    border: 1px dashed var(--pass);
+    border-radius: 50%;
+    opacity: .55;
+  }
+  .verdict.flagged .mark{ color: var(--flag); border-color: var(--flag); }
+  .verdict.flagged .mark::before{ border-color: var(--flag); }
+  .verdict .text b{
+    display:block;
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--forest-deep);
+    margin-bottom: 2px;
+  }
+  .verdict .text .verdict-disclaimer{
+    display:block;
+    margin-top: 6px;
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--flag);
+    opacity: 0.85;
+  }
+  .verdict.flagged .text b{ color: var(--flag); }
+  .verdict .text span{ font-size: 14px; color: var(--ink-soft); }
+
+  .stat-grid{
+    display:grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1px;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    margin-bottom: 40px;
+    box-shadow: 0 10px 24px -18px rgba(22,26,21,.35);
+  }
+  .stat-cell{ background: var(--paper); padding: 18px 16px; transition: background .2s ease; }
+  .stat-cell:hover{ background: #fff; }
+  .stat-cell .k{
+    font-family: var(--mono);
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: .07em;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+  }
+  .stat-cell .v{
+    font-family: var(--serif);
+    font-weight: 700;
+    font-size: 22px;
+    color: var(--forest-deep);
+    font-variant-numeric: tabular-nums;
+  }
+  @media (max-width: 640px){ .stat-grid{ grid-template-columns: repeat(2,1fr); } }
+
+  /* chart */
+  .chart-tabs{ display:flex; gap: 4px; margin-bottom: 18px; flex-wrap:wrap; }
+  .chart-tab{
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 7px 14px;
+    background: transparent;
+    border: 1px solid var(--rule);
+    color: var(--ink-soft);
+    cursor: pointer;
+    border-radius: 2px;
+    transition: background .2s ease, color .2s ease;
+  }
+  .chart-tab.active{ background: var(--forest); color: var(--paper); border-color: var(--forest); }
+  .chart-tab:hover:not(.active){ border-color: var(--forest); }
+  .chart-wrap{
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    padding: 24px;
+    margin-bottom: 8px;
+    overflow-x: auto;
+    box-shadow: 0 1px 0 rgba(22,26,21,.03), 0 10px 24px -18px rgba(22,26,21,.35);
+  }
+  .legend{ display:flex; gap: 24px; margin-bottom:16px; font-family: var(--mono); font-size:12px; color: var(--ink-soft); }
+  .legend span{ display:flex; align-items:center; gap:6px; }
+  .swatch{ width:11px; height:11px; display:inline-block; }
+  .swatch.expected{ background: var(--rule); border: 1px solid var(--ink-soft); }
+  .swatch.actual{ background: var(--forest); }
+  svg text{ font-family: var(--mono); }
+  svg rect{ transition: height .5s var(--ease), y .5s var(--ease); }
+  .bar-hit{ cursor: pointer; }
+  .bar-hit:hover{ opacity: .75; }
+
+  #tooltip{
+    position:absolute;
+    background: var(--forest-deep);
+    color: var(--paper);
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 6px 10px;
+    border-radius: 3px;
+    pointer-events:none;
+    opacity:0;
+    transition: opacity .15s ease;
+    z-index: 10;
+    white-space: nowrap;
+  }
+  #tooltip.show{ opacity: 1; }
+
+  /* table */
+  .table-scroll{ overflow-x:auto; }
+  table{ width: 100%; border-collapse: collapse; font-family: var(--mono); font-size: 13px; margin-top: 24px; min-width: 480px; }
+  th, td{ text-align: right; padding: 8px 10px; border-bottom: 1px solid var(--rule); }
+  th:first-child, td:first-child{ text-align:left; }
+  th{ font-size: 11px; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-soft); border-bottom: 2px solid var(--forest); position: sticky; top:0; background: var(--ledger); }
+  tr.anomaly td{ color: var(--flag); font-weight: 600; }
+  tr.anomaly td:first-child::after{ content: " ×"; }
+  tr{ transition: background .15s ease; }
+  tr:hover td{ background: rgba(36,56,44,0.04); }
+
+  .actions{ display:flex; gap:14px; margin-top: 32px; flex-wrap:wrap; }
+  .btn-secondary{
+    font-family: var(--sans);
+    font-weight: 600;
+    font-size: 14px;
+    background: transparent;
+    color: var(--forest);
+    border: 1.5px solid var(--forest);
+    padding: 11px 22px;
+    border-radius: 2px;
+    cursor: pointer;
+    transition: background .2s ease, color .2s ease;
+  }
+  .btn-secondary:hover{ background: var(--forest); color: var(--paper); }
+  .btn-secondary:disabled{
+    opacity: 0.45;
+    cursor: not-allowed;
+    border-style: dashed;
+  }
+  .btn-secondary:disabled:hover{ background: none; color: var(--forest); }
+
+  .btn-secondary.sample-btn{
+    border-style: dashed;
+    margin-top: 10px;
+  }
+
+  .link-btn{
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--forest);
+    background: none;
+    border: 1px solid var(--forest);
+    border-radius: 2px;
+    padding: 3px 8px;
+    cursor: pointer;
+  }
+  .link-btn:hover{ background: var(--forest); color: var(--paper); }
+
+  tr.row-clickable{ cursor: pointer; }
+  tr.row-clickable:hover td{ background: var(--pass-soft); }
+  .bar-hit{ cursor: pointer; }
+
+  .click-hint{
+    font-family: var(--mono);
+    font-size: 11.5px;
+    color: var(--ink-soft);
+    margin: 6px 0 0;
+  }
+
+  /* drill-down overlay */
+  .drilldown-overlay{
+    position: fixed; inset: 0; z-index: 60;
+    background: rgba(23,37,29,0.55);
+    display: none;
+    align-items: center; justify-content: center;
+    padding: 20px;
+  }
+  .drilldown-overlay.show{ display: flex; }
+  .drilldown-panel{
+    background: var(--paper);
+    border: 1px solid var(--rule);
+    border-radius: 4px;
+    max-width: 900px; width: 100%;
+    max-height: 86vh;
+    display: flex; flex-direction: column;
+    padding: 22px 24px;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.25);
+  }
+  .drilldown-header{ display:flex; justify-content:space-between; align-items:flex-start; gap:16px; }
+  .drilldown-header h3{ margin: 0; font-family: var(--serif); font-size: 20px; }
+  .drilldown-close{
+    background:none; border:1.5px solid var(--forest); border-radius:2px;
+    width:30px; height:30px; font-size:16px; line-height:1; cursor:pointer;
+    color: var(--forest); flex-shrink:0;
+  }
+  .drilldown-close:hover{ background: var(--forest); color: var(--paper); }
+  .drilldown-sub{ font-family: var(--mono); font-size: 12.5px; color: var(--ink-soft); margin: 4px 0 14px; }
+  .drilldown-table-wrap{ overflow: auto; flex: 1; }
+  #drilldownTable{ margin-top: 0; }
+  #drilldownTable th, #drilldownTable td{ font-size: 12px; white-space: nowrap; }
+
+  .sheet-choice-list{ display:flex; flex-direction:column; gap:8px; margin-top:16px; }
+  .sheet-choice-btn{
+    display:flex; justify-content:space-between; align-items:center;
+    width:100%; text-align:left; padding:12px 14px;
+    background: var(--paper); border:1.5px solid var(--rule); border-radius:3px;
+    font-family: var(--sans); cursor:pointer; color: var(--ink);
+    transition: border-color .15s ease, background .15s ease;
+  }
+  .sheet-choice-btn:hover{ border-color: var(--forest); background:#fff; }
+  .sheet-choice-name{ font-weight:600; }
+  .sheet-choice-meta{ font-family: var(--mono); font-size:12px; color: var(--ink-soft); }
+
+  .logo-hint{
+    font-family: var(--mono); font-size: 11px; color: var(--ink-soft); margin-top: 4px;
+  }
+  .session-note{
+    font-family: var(--mono); font-size: 12px; color: var(--ink-soft);
+    margin-top: 14px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+  }
+  .ph-brand{ display: flex; align-items: center; gap: 12px; }
+  #phLogo{ max-height: 46px; max-width: 140px; object-fit: contain; }
+
+  /* second-order section reuses the same verdict/table look as other sections */
+  #secondOrderSection .table-scroll{ margin-top: 18px; }
+
+  /* full report (all tests) — hidden on screen, shown only during full-report print */
+  #fullReportContainer{ display: none; }
+  .fr-summary-table{ width:100%; border-collapse:collapse; font-family: var(--mono); font-size:13px; margin: 14px 0 30px; }
+  .fr-summary-table th, .fr-summary-table td{ text-align:left; padding:7px 10px; border-bottom:1px solid var(--rule); }
+  .fr-summary-table tr.fr-flag td{ color:var(--flag); font-weight:600; }
+  .fr-section{ margin-bottom: 26px; }
+  .fr-section h2{ font-family: var(--serif); font-size: 19px; margin: 0 0 8px; }
+  .fr-verdict{ font-family: var(--sans); font-size: 14px; margin-bottom: 6px; }
+  .fr-verdict.fr-flag{ color: var(--flag); }
+  .fr-stats{ font-family: var(--mono); font-size: 12px; color: var(--ink-soft); margin: 0 0 10px; }
+  .fr-table{ width:100%; border-collapse:collapse; font-family: var(--mono); font-size:12px; }
+  .fr-table th, .fr-table td{ text-align:right; padding:6px 8px; border-bottom:1px solid var(--rule); }
+  .fr-table th:first-child, .fr-table td:first-child{ text-align:left; }
+  .fr-table tr.fr-anomaly td{ color: var(--flag); font-weight:600; }
+
+  .alpha-field{ margin-top: 14px; }
+  .alpha-field label{
+    display:block; font-family: var(--mono); font-size: 12px;
+    color: var(--ink-soft); margin-bottom: 6px;
+  }
+  .alpha-field select, .field select{
+    font-family: var(--sans); font-size: 14px; padding: 9px 10px;
+    border: 1.5px solid var(--rule); border-radius: 2px; background: var(--paper);
+    color: var(--ink); width: 100%; max-width: 320px;
+  }
+
+  .thresh-summary{
+    font-family: var(--mono);
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 12px;
+    max-width: 68ch;
+  }
+
+  .ratio-input{
+    width: 100%;
+    font-family: var(--mono);
+    font-size: 13px;
+    padding: 5px 6px;
+    border: 1px solid var(--rule);
+    background: #fff;
+    color: var(--ink);
+    border-radius: 2px;
+    text-align: right;
+  }
+  .ratio-input:focus{ border-color: var(--forest); }
+  #ratioTable td, #ratioTable th, #ratioResultTable td, #ratioResultTable th{ font-size:12.5px; }
+
+  /* ---------- about / faq ---------- */
+  .about{ margin-top: 72px; padding-top: 32px; border-top: 1px solid var(--rule); font-size: 14px; color: var(--ink-soft); }
+  .about h3{ font-family: var(--serif); color: var(--forest-deep); font-size: 17px; margin: 0 0 10px; }
+  .about p{ max-width: 68ch; }
+  .about .disclaimer{
+    font-family: var(--mono);
+    font-size: 12px;
+    background: var(--paper);
+    border-left: 3px solid var(--gold);
+    padding: 12px 16px;
+    margin-top: 20px;
+  }
+
+  .faq-item{ border-bottom: 1px solid var(--rule); }
+  .faq-q{
+    width:100%;
+    text-align:left;
+    background:none;
+    border:none;
+    padding: 18px 0;
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--forest-deep);
+    cursor:pointer;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap: 12px;
+  }
+  .faq-q .plus{
+    font-family: var(--mono);
+    color: var(--gold);
+    transition: transform .3s var(--ease);
+    flex-shrink:0;
+  }
+  .faq-q[aria-expanded="true"] .plus{ transform: rotate(45deg); }
+  .faq-a{
+    max-height:0;
+    overflow:hidden;
+    transition: max-height .4s var(--ease);
+    font-size: 14px;
+    color: var(--ink-soft);
+    max-width: 68ch;
+  }
+  .faq-a p{ padding-bottom: 18px; margin:0; }
+
+  footer{
+    margin-top: 56px;
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-soft);
+    display:flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  @media (max-width: 640px){
+    .staircase{ height: 140px; }
+    header{ padding: 40px 0 28px; }
+  }
+
+  .print-letterhead{ display:none; }
+  @media print{
+    body{ background:#fff; }
+    .dropzone, .picker, .actions, footer, .chart-tabs, .about, #faq, .site-bar, .byline, .related-tools, .newsletter-cta, .structuring-section, .sequence-section, .sampling-section, .materiality-section, .ratio-section, header, .workpaper-fields, #engagementSection, #loadDataSection{ display:none !important; }
+    .wrap{ padding: 0 12px 24px; max-width: none; }
+    section{ margin: 0 0 28px; }
+    .verdict, .chart-wrap, .stat-grid{ box-shadow:none !important; }
+
+    /* "Export full report" replaces the single-test view with every test
+       stacked together. Toggled via body.full-report-mode, added right
+       before window.print() and removed right after. */
+    body.full-report-mode #results,
+    body.full-report-mode #duplicatesSection,
+    body.full-report-mode #secondOrderSection{ display:none !important; }
+    #fullReportContainer{ display:none; }
+    body.full-report-mode #fullReportContainer{ display:block !important; }
+    .fr-section{ page-break-inside: avoid; }
+    .fr-summary{ page-break-after: always; }
+
+    .print-letterhead{
+      display:flex;
+      justify-content: space-between;
+      align-items: flex-end;
+      gap: 20px;
+      padding-bottom: 14px;
+      margin-bottom: 22px;
+      border-bottom: 3px double #000;
+    }
+    .print-letterhead h1{
+      font-family: var(--serif);
+      font-size: 22px;
+      margin: 0 0 4px;
+      color: #000;
+    }
+    .print-letterhead .meta{
+      font-family: var(--mono);
+      font-size: 11px;
+      line-height: 1.6;
+      color: #000;
+    }
+    .print-letterhead .meta b{ text-transform: uppercase; letter-spacing: .05em; margin-right: 4px; }
+    .print-letterhead .stamp{
+      font-family: var(--mono);
+      font-size: 10px;
+      color: #444;
+      text-align: right;
+      white-space: nowrap;
+    }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <div class="print-letterhead" id="printLetterhead">
+    <div>
+      <div class="ph-brand">
+        <img id="phLogo" alt="Firm logo" style="display:none;">
+        <h1 id="phFirm">LedgerPrint Workpaper</h1>
+      </div>
+      <div class="meta">
+        <div><b>Client</b><span id="phClient">—</span></div>
+        <div><b>Period</b><span id="phPeriod">—</span></div>
+        <div><b>Prepared by</b><span id="phPreparer">—</span></div>
+        <div><b>Reviewed by</b><span id="phReviewer">—</span></div>
+        <div><b>Partner</b><span id="phPartner">—</span></div>
+      </div>
+    </div>
+    <div class="stamp" id="phStamp"></div>
+  </div>
+
+  <div class="site-bar reveal r1">
+    <a href="https://www.claritywithai.org" class="site-link">← Clarity With AI</a>
+    <span class="site-bar-sep">·</span>
+    <span>free tools &amp; guides for small audit &amp; accounting firms</span>
+  </div>
+
+  <header>
+    <div class="eyebrow reveal r1">Runs entirely in your browser — no upload, ever</div>
+    <h1 class="reveal r1">LedgerPrint</h1>
+    <p class="sub reveal r2">Benford's Law, structuring, duplicate and sequence-gap tests, risk-weighted MUS sampling, a materiality calculator, and ratio/trend analytical review — with reviewer and partner sign-off built in. <b>Built for firms that can't afford a five-figure CAAT suite.</b></p>
+    <p class="byline reveal r2">Built by <a href="https://www.claritywithai.org" target="_blank" rel="noopener">Muhammad Faisal Gurmani</a>, CA Finalist</p>
+
+    <div class="staircase reveal r3" id="staircase" role="img" aria-label="Bar chart showing Benford's Law expected first-digit frequencies, descending from 30.1% for digit 1 to 4.6% for digit 9"></div>
+    <div class="stair-caption reveal r4">Expected first-digit frequency under Benford's Law — the baseline every digit test below is measured against</div>
+  </header>
+
+  <section class="reveal r1" id="engagementSection">
+    <div class="label-row"><span class="tick-num">01</span><h2>Engagement details <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(optional — appears on your printed workpaper)</span></h2></div>
+    <div class="workpaper-fields">
+      <div class="field"><label for="fFirm">Firm name</label><input type="text" id="fFirm" placeholder="e.g. Zahid Jameel &amp; Co."></div>
+      <div class="field"><label for="fClient">Client / engagement</label><input type="text" id="fClient" placeholder="Client name"></div>
+      <div class="field"><label for="fPeriod">Period tested</label><input type="text" id="fPeriod" placeholder="e.g. FY 2025-26"></div>
+      <div class="field"><label for="fPreparer">Prepared by</label><input type="text" id="fPreparer" placeholder="Your name"></div>
+      <div class="field">
+        <label for="fLogo">Firm logo (optional, for letterhead)</label>
+        <input type="file" id="fLogo" accept="image/png,image/jpeg,image/svg+xml">
+        <p class="logo-hint" id="logoHint">PNG/JPG/SVG, under 500KB. Saved only in this browser.</p>
+      </div>
+      <div class="field"><label for="fReviewer">Reviewed by</label><input type="text" id="fReviewer" placeholder="Senior / manager name"></div>
+      <div class="field"><label for="fPartner">Engagement partner</label><input type="text" id="fPartner" placeholder="Partner name"></div>
+      <div class="field"><label for="fReviewDate">Review date</label><input type="date" id="fReviewDate"></div>
+    </div>
+    <p class="session-note" id="sessionNote" style="display:none;">Your firm details are remembered on this device for next time. <button type="button" id="forgetBtn" class="link-btn">Forget saved details</button></p>
+  </section>
+
+  <section id="loadDataSection">
+    <div class="label-row"><span class="tick-num">02</span><h2>Load your data</h2></div>
+    <div class="dropzone" id="dropzone" tabindex="0" role="button" aria-label="Upload CSV or Excel file">
+      <div class="icon" aria-hidden="true">⊕</div>
+      <p><strong>Drop a CSV or Excel file</strong>, or click to browse</p>
+      <p style="font-size:13px">General ledger export, vendor payments, expense claims — any list of numeric amounts</p>
+      <p class="filename" id="filename"></p>
+      <input type="file" id="fileInput" accept=".csv,.xlsx,.xls" aria-label="File upload input">
+    </div>
+    <div class="privacy-note">Your file is parsed in this browser tab only. Nothing is uploaded, logged, or sent anywhere — close the tab and it's gone.</div>
+    <button class="btn-secondary sample-btn" id="sampleBtn" type="button">Try it with sample data (no file needed)</button>
+
+    <div class="picker" id="picker">
+      <label for="colSelect">Which column holds the amounts to test?</label>
+      <select id="colSelect"></select>
+      <p class="col-preview" id="colPreview" aria-live="polite"></p>
+
+      <div class="alpha-field">
+        <label for="alphaSelect">Significance level (α) for p-value-based tests</label>
+        <select id="alphaSelect">
+          <option value="0.10">0.10 — lenient (flags more)</option>
+          <option value="0.05" selected>0.05 — standard</option>
+          <option value="0.01">0.01 — strict (flags less)</option>
+        </select>
+      </div>
+
+      <br>
+      <button class="run-btn" id="runBtn" disabled>Run digital analysis</button>
+    </div>
+  </section>
+
+  <section id="results">
+    <div class="label-row"><span class="tick-num">03</span><h2>Results</h2></div>
+
+    <div class="verdict" id="verdict">
+      <div class="mark" id="verdictMark" aria-hidden="true">PASS</div>
+      <div class="text">
+        <b id="verdictTitle">Close conformity</b>
+        <span id="verdictSub">This population's digit pattern matches Benford's Law closely.</span>
+        <span id="verdictDisclaimer" class="verdict-disclaimer" style="display:none;">This is a risk indicator, not a conclusion — it calls for follow-up procedures, not a finding on its own.</span>
+      </div>
+    </div>
+
+    <div class="stat-grid">
+      <div class="stat-cell"><div class="k">Entries tested</div><div class="v" id="statN">0</div></div>
+      <div class="stat-cell"><div class="k">Mean abs. deviation</div><div class="v" id="statMAD">0.0000</div></div>
+      <div class="stat-cell"><div class="k">Chi-square</div><div class="v" id="statChi">0.00</div></div>
+      <div class="stat-cell"><div class="k">p-value</div><div class="v" id="statP">—</div></div>
+    </div>
+
+    <div class="chart-tabs" role="tablist" aria-label="Digital analysis test selector">
+      <button class="chart-tab active" data-mode="d1" role="tab" aria-selected="true">First digit</button>
+      <button class="chart-tab" data-mode="d2" role="tab" aria-selected="false">Second digit</button>
+      <button class="chart-tab" data-mode="d12" role="tab" aria-selected="false">First two digits</button>
+      <button class="chart-tab" data-mode="lastTwo" role="tab" aria-selected="false">Last two digits</button>
+      <button class="chart-tab" data-mode="round" role="tab" aria-selected="false">Round numbers</button>
+    </div>
+    <div class="chart-wrap" style="position:relative;">
+      <div class="legend">
+        <span><span class="swatch expected"></span>Expected (Benford)</span>
+        <span><span class="swatch actual"></span>Your data</span>
+      </div>
+      <svg id="chart" width="100%" viewBox="0 0 860 320" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Chart comparing expected Benford's Law frequency to actual data frequency"></svg>
+      <div id="tooltip"></div>
+    </div>
+    <p class="click-hint">Click any bar or table row below to see the actual transactions behind it.</p>
+
+    <div class="table-scroll">
+      <table id="detailTable">
+        <thead><tr><th>Digit</th><th>Expected %</th><th>Actual %</th><th>Count</th><th>Deviation</th></tr></thead>
+        <tbody id="detailBody"></tbody>
+      </table>
+    </div>
+
+    <div class="actions">
+      <button class="btn-secondary" id="printBtn">Save as PDF / print workpaper</button>
+      <button class="btn-secondary" id="fullReportBtn">Export full report (all tests, PDF)</button>
+      <button class="btn-secondary" id="exportCsvBtn">Export current test (CSV)</button>
+      <button class="btn-secondary" id="resetBtn">Test another file</button>
+    </div>
+  </section>
+
+  <section id="structuringSection" class="structuring-section" style="display:none;">
+    <div class="label-row"><span class="tick-num">04</span><h2>Threshold / structuring check <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(optional)</span></h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Enter an approval or sign-off limit to see whether amounts cluster suspiciously just below it — the pattern used to split a payment across multiple entries to dodge an approval control (the HealthSouth entries mentioned above were kept just under a $5,000 sign-off limit).</p>
+    <div class="workpaper-fields" style="grid-template-columns: 2fr 1fr;">
+      <div class="field"><label for="fThreshold">Approval / sign-off threshold</label><input type="number" id="fThreshold" placeholder="e.g. 5000" step="any" min="0"></div>
+      <div class="field" style="display:flex;align-items:flex-end;"><button class="run-btn" id="thresholdBtn" style="margin-top:0;width:100%;">Check for clustering</button></div>
+    </div>
+    <div id="thresholdResult" style="display:none;">
+      <div class="chart-wrap" style="position:relative;margin-top:20px;">
+        <svg id="thresholdChart" width="100%" viewBox="0 0 860 260" preserveAspectRatio="xMidYMid meet" role="img" aria-label="Histogram of transaction amounts around the entered threshold"></svg>
+      </div>
+      <p class="thresh-summary" id="threshSummary"></p>
+    </div>
+  </section>
+
+  <section id="duplicatesSection" style="display:none;">
+    <div class="label-row"><span class="tick-num">05</span><h2>Duplicate amount check</h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Genuine transaction populations rarely repeat the exact same amount many times. A handful of amounts occurring far more often than chance would predict can indicate split invoices, duplicate payments, or copy-pasted/fabricated entries. This is a practical screening heuristic (Nigrini's "number duplication" test), not a formal p-value test.</p>
+    <div class="verdict" id="dupVerdict">
+      <div class="mark" id="dupMark" aria-hidden="true">PASS</div>
+      <div class="text">
+        <b id="dupTitle">No amounts repeat unusually often</b>
+        <span id="dupSub"></span>
+      </div>
+    </div>
+    <div class="table-scroll">
+      <table id="dupTable">
+        <thead><tr><th>Amount</th><th>Occurrences</th><th>% of population</th><th></th></tr></thead>
+        <tbody id="dupBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="secondOrderSection" style="display:none;">
+    <div class="label-row"><span class="tick-num">06</span><h2>Second-order test <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(digit differences)</span></h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Nigrini's second-order test sorts every amount smallest-to-largest, then tests the leading digits of the <i>gaps</i> between consecutive amounts against Benford's Law. Real transaction-level data tends to pass this regardless of what the underlying amounts look like — invented or copy-edited figures often don't, which makes this a useful cross-check independent of the first-digit test above.</p>
+    <div class="verdict" id="soVerdict">
+      <div class="mark" id="soMark" aria-hidden="true">PASS</div>
+      <div class="text">
+        <b id="soTitle">Close conformity</b>
+        <span id="soSub"></span>
+      </div>
+    </div>
+    <div class="stat-grid">
+      <div class="stat-cell"><div class="k">Gaps tested</div><div class="v" id="soN">0</div></div>
+      <div class="stat-cell"><div class="k">Mean abs. deviation</div><div class="v" id="soMAD">0.0000</div></div>
+      <div class="stat-cell"><div class="k">p-value</div><div class="v" id="soP">—</div></div>
+    </div>
+    <div class="table-scroll">
+      <table id="soTable">
+        <thead><tr><th>Digit</th><th>Expected %</th><th>Actual %</th><th>Count</th><th>Deviation</th></tr></thead>
+        <tbody id="soBody"></tbody>
+      </table>
+    </div>
+  </section>
+
+  <section id="sequenceSection" class="sequence-section" style="display:none;">
+    <div class="label-row"><span class="tick-num">07</span><h2>Document number sequence / gap test <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(optional — completeness testing)</span></h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Pick the column holding invoice, cheque, voucher, or receipt numbers. LedgerPrint extracts the numeric part of each reference (handling prefixes like <code>INV-</code> or <code>PV/2025/</code>), sorts within each prefix group, and flags missing numbers in the sequence and duplicate numbers — the completeness check every CAAT suite runs before sampling.</p>
+    <div class="workpaper-fields" style="grid-template-columns: 2fr 1fr;">
+      <div class="field"><label for="seqColSelect">Document number column</label><select id="seqColSelect"></select></div>
+      <div class="field" style="display:flex;align-items:flex-end;"><button class="run-btn" id="seqRunBtn" style="margin-top:0;width:100%;">Check sequence</button></div>
+    </div>
+    <div id="seqResult" style="display:none;">
+      <div class="verdict" id="seqVerdict">
+        <div class="mark" id="seqMark" aria-hidden="true">PASS</div>
+        <div class="text">
+          <b id="seqTitle">No gaps or duplicates found</b>
+          <span id="seqSub"></span>
+        </div>
+      </div>
+      <div class="table-scroll">
+        <table id="seqTable">
+          <thead><tr><th>Prefix / series</th><th>Range</th><th>Expected count</th><th>Actual (unique)</th><th>Missing</th><th>Duplicated</th></tr></thead>
+          <tbody id="seqBody"></tbody>
+        </table>
+      </div>
+      <p class="click-hint">Click a row to see the missing and duplicated numbers in that series.</p>
+    </div>
+  </section>
+
+  <section id="samplingSection" class="sampling-section">
+    <div class="label-row"><span class="tick-num">08</span><h2>Sample size calculator <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(monetary unit sampling)</span></h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Standard MUS sample size using Poisson reliability factors for a zero-expected-misstatement plan (the same approach behind most firm sampling tables). If you expect some misstatements, enter an estimate below — LedgerPrint applies a simple expansion factor rather than a precise non-zero-error formula, so treat that case as indicative and confirm against your firm's methodology.</p>
+    <div class="workpaper-fields">
+      <div class="field"><label for="fPopValue">Population value (Rs. / total book value)</label><input type="number" id="fPopValue" placeholder="e.g. 45000000" step="any" min="0"></div>
+      <div class="field"><label for="fConfidence">Desired confidence level</label>
+        <select id="fConfidence">
+          <option value="99">99% — high assurance</option>
+          <option value="95" selected>95% — standard</option>
+          <option value="90">90%</option>
+          <option value="85">85%</option>
+          <option value="80">80%</option>
+          <option value="70">70%</option>
+          <option value="60">60%</option>
+          <option value="50">50% — low assurance</option>
+        </select>
+      </div>
+      <div class="field"><label for="fTolerable">Tolerable misstatement (Rs.)</label><input type="number" id="fTolerable" placeholder="e.g. 900000" step="any" min="0"></div>
+      <div class="field"><label for="fExpected">Expected misstatement (Rs., optional)</label><input type="number" id="fExpected" placeholder="0" step="any" min="0" value="0"></div>
+    </div>
+    <button class="run-btn" id="calcSampleBtn" type="button">Calculate sample size</button>
+
+    <div id="sampleResult" style="display:none;">
+      <div class="stat-grid" style="margin-top:24px;">
+        <div class="stat-cell"><div class="k">Reliability factor</div><div class="v" id="sampReliability">—</div></div>
+        <div class="stat-cell"><div class="k">Sample size</div><div class="v" id="sampSize">—</div></div>
+        <div class="stat-cell"><div class="k">Sampling interval</div><div class="v" id="sampInterval">—</div></div>
+        <div class="stat-cell"><div class="k">Basis</div><div class="v" id="sampBasis" style="font-size:14px;">—</div></div>
+      </div>
+      <div class="workpaper-fields" style="grid-template-columns: 2fr 1fr 1fr;margin-top:8px;">
+        <div class="field"><label for="sampValueCol">Column to sample from (loaded file's amount column)</label><select id="sampValueCol"><option value="">— load a file in section 02 first —</option></select></div>
+        <div class="field"><label for="sampDateCol">Date column (optional — enables weekend/period-end risk flags)</label><select id="sampDateCol"><option value="">— none —</option></select></div>
+        <div class="field" style="display:flex;align-items:flex-end;"><button class="btn-secondary" id="pullSampleBtn" type="button" style="width:100%;" disabled title="Load a file in section 02 first — this pulls the sample from your loaded data.">Pull systematic MUS sample</button></div>
+      </div>
+      <p class="thresh-summary" id="sampNote">Load a file above (section 02) to pull an actual sample; otherwise use the sample size and interval above with your own selection method.</p>
+      <div class="table-scroll" id="sampTableWrap" style="display:none;">
+        <table id="sampTable">
+          <thead><tr><th>#</th><th>Sampling point (Rs.)</th><th>Amount</th><th>Cumulative</th><th>Risk flags</th></tr></thead>
+          <tbody id="sampBody"></tbody>
+        </table>
+      </div>
+      <div class="actions" id="sampExportWrap" style="display:none;">
+        <button class="btn-secondary" id="sampExportBtn">Export statistical sample (CSV)</button>
+      </div>
+
+      <div id="riskResult" style="display:none;margin-top:36px;">
+        <div class="label-row"><span class="tick-num">08b</span><h2 style="font-size:19px;">Risk-based additions <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(not already in the statistical sample above)</span></h2></div>
+        <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Statistical MUS gives monetary coverage but can miss small, unusual items. This scans the <i>entire</i> loaded population and ranks transactions by a simple risk score — round amounts, top-value outliers, duplicated amounts, entries just under your entered threshold (section 04, if set), and weekend/period-end postings (if a date column is picked above). ISA 530 permits combining statistical sampling with specific/judgmental selections like these.</p>
+        <div class="workpaper-fields" style="grid-template-columns: 1fr 1fr;">
+          <div class="field"><label for="riskTopN">How many risk-based items to show</label><input type="number" id="riskTopN" value="15" min="1" max="200" step="1"></div>
+          <div class="field" style="display:flex;align-items:flex-end;"><button class="btn-secondary" id="findRiskBtn" type="button" style="width:100%;" disabled title="Load a file in section 02 first — this scans your loaded data for risk signals.">Find highest-risk items</button></div>
+        </div>
+        <p class="thresh-summary" id="riskNote"></p>
+        <div class="table-scroll" id="riskTableWrap" style="display:none;">
+          <table id="riskTable">
+            <thead><tr><th>Amount</th><th>Risk score</th><th>Why flagged</th></tr></thead>
+            <tbody id="riskBody"></tbody>
+          </table>
+        </div>
+        <div class="actions" id="riskExportWrap" style="display:none;">
+          <button class="btn-secondary" id="riskExportBtn">Export risk-based selections (CSV)</button>
+          <button class="btn-secondary" id="combinedExportBtn">Export combined sample (statistical + risk-based)</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="materialitySection" class="materiality-section">
+    <div class="label-row"><span class="tick-num">09</span><h2>Materiality calculator <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(planning)</span></h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Standard planning-materiality benchmarks. Percentages below are typical starting ranges, not firm policy — apply professional judgment and your firm's methodology for the final figure. Once calculated, planning materiality can be sent straight into the sampling calculator (section 08) as the tolerable misstatement.</p>
+    <div class="workpaper-fields">
+      <div class="field">
+        <label for="matBenchmark">Benchmark</label>
+        <select id="matBenchmark">
+          <option value="revenue" data-pct="1">Total revenue (typical 0.5%–1%)</option>
+          <option value="assets" data-pct="1.5">Total assets (typical 1%–2%)</option>
+          <option value="pbt" data-pct="7.5" selected>Net profit before tax (typical 5%–10%)</option>
+          <option value="expenses" data-pct="1">Total expenses (typical 0.5%–1%, useful for not-for-profits)</option>
+          <option value="equity" data-pct="3.5">Total equity (typical 2%–5%)</option>
+        </select>
+      </div>
+      <div class="field"><label for="matBenchmarkValue">Benchmark value (Rs.)</label><input type="number" id="matBenchmarkValue" placeholder="e.g. 12000000" step="any" min="0"></div>
+      <div class="field"><label for="matPct">Planning materiality %</label><input type="number" id="matPct" value="7.5" step="0.1" min="0.01" max="100"></div>
+      <div class="field"><label for="matPerfPct">Performance materiality (% of planning)</label><input type="number" id="matPerfPct" value="75" step="1" min="1" max="100"></div>
+      <div class="field"><label for="matTrivialPct">Clearly trivial threshold (% of planning)</label><input type="number" id="matTrivialPct" value="5" step="1" min="1" max="100"></div>
+    </div>
+    <button class="run-btn" id="calcMaterialityBtn" type="button">Calculate materiality</button>
+
+    <div id="materialityResult" style="display:none;">
+      <div class="stat-grid" style="margin-top:24px;">
+        <div class="stat-cell"><div class="k">Planning materiality</div><div class="v" id="matPlanning">—</div></div>
+        <div class="stat-cell"><div class="k">Performance materiality</div><div class="v" id="matPerformance">—</div></div>
+        <div class="stat-cell"><div class="k">Clearly trivial threshold</div><div class="v" id="matTrivial">—</div></div>
+        <div class="stat-cell"><div class="k">Benchmark used</div><div class="v" id="matBenchmarkLabel" style="font-size:14px;">—</div></div>
+      </div>
+      <button class="btn-secondary" id="matToSamplingBtn" type="button" style="margin-top:8px;">Use planning materiality as tolerable misstatement (section 08)</button>
+    </div>
+  </section>
+
+  <section id="ratioSection" class="ratio-section">
+    <div class="label-row"><span class="tick-num">10</span><h2>Ratio &amp; trend analysis <span style="font-family:var(--mono);font-size:12px;color:var(--ink-soft);font-weight:400;">(analytical review)</span></h2></div>
+    <p style="max-width:68ch;color:var(--ink-soft);font-size:14px;">Enter current and prior period figures from the trial balance or financial statements. LedgerPrint computes horizontal (%) movement on each line item plus key ratios for both periods, and flags variances beyond your threshold — the standard analytical review procedure a partner checks at planning and completion.</p>
+    <div class="field" style="max-width:220px;margin-bottom:16px;"><label for="ratioVarThreshold">Flag variances beyond (%)</label><input type="number" id="ratioVarThreshold" value="15" step="1" min="1"></div>
+    <div class="table-scroll">
+      <table id="ratioTable">
+        <thead><tr><th style="text-align:left;">Line item</th><th>Current period</th><th>Prior period</th></tr></thead>
+        <tbody id="ratioBody"></tbody>
+      </table>
+    </div>
+    <button class="run-btn" id="calcRatioBtn" type="button" style="margin-top:20px;">Calculate ratios &amp; variances</button>
+
+    <div id="ratioResult" style="display:none;margin-top:28px;">
+      <h3 style="font-family:var(--serif);font-size:18px;color:var(--forest-deep);margin:0 0 12px;">Line item movement</h3>
+      <div class="table-scroll">
+        <table id="ratioMovementTable">
+          <thead><tr><th style="text-align:left;">Line item</th><th>Current</th><th>Prior</th><th>Change</th><th>Change %</th></tr></thead>
+          <tbody id="ratioMovementBody"></tbody>
+        </table>
+      </div>
+      <h3 style="font-family:var(--serif);font-size:18px;color:var(--forest-deep);margin:28px 0 12px;">Key ratios</h3>
+      <div class="table-scroll">
+        <table id="ratioResultTable">
+          <thead><tr><th style="text-align:left;">Ratio</th><th>Current</th><th>Prior</th><th>Change %</th></tr></thead>
+          <tbody id="ratioResultBody"></tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <div id="fullReportContainer"></div>
+
+  <div id="sheetChoiceOverlay" class="drilldown-overlay" role="dialog" aria-modal="true" aria-label="Choose a worksheet">
+    <div class="drilldown-panel" style="max-width:520px;">
+      <div class="drilldown-header">
+        <h3>This workbook has more than one sheet</h3>
+        <button class="drilldown-close" id="sheetChoiceClose" aria-label="Close">✕</button>
+      </div>
+      <p class="drilldown-sub">Pick the sheet that holds the transactions to test — LedgerPrint won't guess for you.</p>
+      <div id="sheetChoiceList" class="sheet-choice-list"></div>
+    </div>
+  </div>
+
+  <div id="drilldownOverlay" class="drilldown-overlay" role="dialog" aria-modal="true" aria-label="Matching transactions">
+    <div class="drilldown-panel">
+      <div class="drilldown-header">
+        <h3 id="drilldownTitle">Matching transactions</h3>
+        <button class="drilldown-close" id="drilldownClose" aria-label="Close">✕</button>
+      </div>
+      <p class="drilldown-sub" id="drilldownSub"></p>
+      <div class="drilldown-table-wrap">
+        <table id="drilldownTable">
+          <thead id="drilldownHead"></thead>
+          <tbody id="drilldownBody"></tbody>
+        </table>
+      </div>
+      <div class="actions">
+        <button class="btn-secondary" id="drilldownExport">Export these rows (CSV)</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="about">
+    <h3>What this checks — and what it doesn't</h3>
+    <p>Benford's Law predicts that in most naturally occurring financial datasets, the digit 1 leads about 30% of numbers, digit 2 about 18%, decreasing down to digit 9 at under 5%. Large, systematic deviations can indicate rounded estimates, fabricated entries, or amounts structured to dodge an approval threshold — a pattern documented in cases like HealthSouth, where entries were kept just under a $5,000 sign-off limit.</p>
+    <p>Conformity is scored using Nigrini's mean absolute deviation (MAD) scale, which uses tighter bands as more digits are tested. For the first digit: under 0.006 is close conformity, up to 0.012 acceptable, up to 0.015 marginal, above that nonconformity. The second-digit and first-two-digits tabs above are scored against their own, stricter Nigrini thresholds — each verdict reflects only the digit test currently shown. The last-two-digits tab is a different kind of test: unlike the others it doesn't follow Benford's Law at all — it expects a roughly uniform spread across all 100 possible pairs (00–99) — so it's scored on statistical significance (p-value) rather than a MAD table.</p>
+    <div class="disclaimer">This is a risk-indicator test, not proof of fraud. ISA 240 treats digital analysis as one input into professional judgment — a flagged population calls for follow-up procedures, not a conclusion on its own. Small, homogeneous, or narrow-range datasets (e.g. a single recurring fee) can fail Benford's Law without any wrongdoing.</div>
+  </div>
+
+  <div class="about" id="faq">
+    <h3>Frequently asked questions</h3>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">What is Benford's Law and how does it detect fraud?<span class="plus" aria-hidden="true">+</span></button>
+      <div class="faq-a"><p>Benford's Law predicts that in most naturally occurring financial datasets, the digit 1 appears as the leading digit about 30% of the time, decreasing down to digit 9 at under 5%. When someone fabricates or rounds numbers, this natural pattern breaks down — auditors compare a client's actual digit distribution against the Benford curve to flag populations that warrant closer inspection.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Is LedgerPrint really free, and does my data leave my browser?<span class="plus" aria-hidden="true">+</span></button>
+      <div class="faq-a"><p>Yes. LedgerPrint runs entirely client-side in your browser tab. Your file is parsed locally and never uploaded to any server. There's no account, no tracking of the data itself, and no cost — now or later.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">What does MAD and conformity mean in the results?<span class="plus" aria-hidden="true">+</span></button>
+      <div class="faq-a"><p>MAD (Mean Absolute Deviation) measures how far your data's actual digit frequencies are from Benford's expected frequencies. Nigrini's scale for the first digit is: under 0.006 close conformity, up to 0.012 acceptable, up to 0.015 marginal, and above that, nonconformity that may warrant follow-up. The second-digit and first-two-digits tests use their own, tighter thresholds — LedgerPrint scores each tab independently, so the verdict shown always matches whichever digit test is selected.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">Can Benford's Law prove fraud on its own?<span class="plus" aria-hidden="true">+</span></button>
+      <div class="faq-a"><p>No. It's a risk-indicator test, not proof. ISA 240 treats digital analysis as one input into professional judgment — a flagged population calls for follow-up procedures like inquiry and vouching, not a standalone conclusion. Small or narrow-range datasets can fail the test without any wrongdoing.</p></div>
+    </div>
+    <div class="faq-item">
+      <button class="faq-q" aria-expanded="false">What file formats does LedgerPrint accept?<span class="plus" aria-hidden="true">+</span></button>
+      <div class="faq-a"><p>CSV and Excel (.xlsx, .xls) files. Any general ledger export, vendor payment list, or expense claim register with a numeric amount column will work.</p></div>
+    </div>
+  </div>
+
+  <footer>
+    <span>LedgerPrint — free, open-source, no account required</span>
+  </footer>
+
+</div>
+
+<script>
+// ---------------- Benford expected distributions ----------------
+const benfordD1 = {};
+for(let d=1; d<=9; d++) benfordD1[d] = Math.log10(1 + 1/d);
+
+const benfordD2 = {};
+for(let d=0; d<=9; d++){
+  let sum = 0;
+  for(let f=1; f<=9; f++) sum += Math.log10(1 + 1/(f*10+d));
+  benfordD2[d] = sum;
+}
+
+const benfordD12 = {};
+for(let n=10; n<=99; n++) benfordD12[n] = Math.log10(1 + 1/n);
+
+// Expected distribution for the last-two-digits test: unlike the first-digit,
+// second-digit, and first-two-digits tests above, this one is NOT a Benford's
+// Law test. As numbers get further from the leading digit, digit frequencies
+// flatten out toward uniform — so the last two digits of a natural, unmanipulated
+// amount are expected to land on each pair 00–99 at roughly 1% each. A population
+// that instead clusters on a handful of pairs (e.g. round or duplicated amounts)
+// deviates from that uniform baseline. (Nigrini, Forensic Analytics.)
+const lastTwoExpected = {};
+for(let i=0; i<100; i++) lastTwoExpected[String(i).padStart(2,'0')] = 0.01;
+
+// Expected round-number rates under a naive "uniform trailing digits" baseline
+// (used for the round-number test — NOT part of Benford's Law itself).
+const roundExpected = {
+  'Not round': 0.9,
+  'Ends in 0': 0.09,
+  'Ends in 00': 0.009,
+  'Ends in 000+': 0.001
+};
+
+// ---------------- staircase hero ----------------
+function renderStaircase(){
+  const el = document.getElementById('staircase');
+  el.innerHTML = '';
+  const maxPct = benfordD1[1]*100;
+  for(let d=1; d<=9; d++){
+    const pct = benfordD1[d]*100;
+    const heightPct = 12 + (pct/maxPct)*88;
+    const fontSize = 20 + (pct/maxPct)*46;
+    const stair = document.createElement('div');
+    stair.className = 'stair';
+    stair.style.setProperty('--h', heightPct + '%');
+    stair.style.animationDelay = (0.5 + d*0.06) + 's';
+    stair.innerHTML = `<div class="num" style="font-size:${fontSize}px">${d}</div><div class="pct">${pct.toFixed(1)}%</div>`;
+    el.appendChild(stair);
+  }
+}
+renderStaircase();
+
+// ---------------- FAQ accordion ----------------
+document.querySelectorAll('.faq-q').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const expanded = btn.getAttribute('aria-expanded') === 'true';
+    const answer = btn.nextElementSibling;
+    btn.setAttribute('aria-expanded', String(!expanded));
+    answer.style.maxHeight = expanded ? '0px' : answer.scrollHeight + 'px';
+  });
+});
+
+// ---------------- file handling ----------------
+let parsedRows = null;
+let headers = [];
+let firmLogoDataUrl = null;
+
+// ---------------- session memory (this device only) ----------------
+// Remembers firm/client/period/preparer + logo across visits so a repeat
+// user doesn't retype their letterhead every time. Wrapped in try/catch
+// since storage can be blocked (private browsing, embedded contexts) —
+// the tool should degrade gracefully, not break, if it's unavailable.
+const ENGAGEMENT_STORAGE_KEY = 'ledgerprint_engagement_v1';
+
+function loadSavedEngagement(){
+  try{
+    const raw = localStorage.getItem(ENGAGEMENT_STORAGE_KEY);
+    if(!raw) return;
+    const data = JSON.parse(raw);
+    if(data.firm) document.getElementById('fFirm').value = data.firm;
+    if(data.client) document.getElementById('fClient').value = data.client;
+    if(data.period) document.getElementById('fPeriod').value = data.period;
+    if(data.preparer) document.getElementById('fPreparer').value = data.preparer;
+    if(data.reviewer) document.getElementById('fReviewer').value = data.reviewer;
+    if(data.partner) document.getElementById('fPartner').value = data.partner;
+    if(data.logo){
+      firmLogoDataUrl = data.logo;
+      document.getElementById('logoHint').textContent = 'Saved logo loaded from this device.';
+    }
+    if(data.firm || data.client || data.period || data.preparer || data.reviewer || data.partner || data.logo){
+      document.getElementById('sessionNote').style.display = 'flex';
+    }
+  }catch(e){ /* storage unavailable — silently skip */ }
+}
+
+function saveEngagement(){
+  try{
+    const data = {
+      firm: document.getElementById('fFirm').value,
+      client: document.getElementById('fClient').value,
+      period: document.getElementById('fPeriod').value,
+      preparer: document.getElementById('fPreparer').value,
+      reviewer: document.getElementById('fReviewer').value,
+      partner: document.getElementById('fPartner').value,
+      logo: firmLogoDataUrl || null
+    };
+    localStorage.setItem(ENGAGEMENT_STORAGE_KEY, JSON.stringify(data));
+    document.getElementById('sessionNote').style.display = 'flex';
+  }catch(e){ /* quota exceeded or storage blocked — silently skip */ }
+}
+
+['fFirm','fClient','fPeriod','fPreparer','fReviewer','fPartner'].forEach(id => {
+  document.getElementById(id).addEventListener('change', saveEngagement);
+});
+
+document.getElementById('forgetBtn').addEventListener('click', () => {
+  try{ localStorage.removeItem(ENGAGEMENT_STORAGE_KEY); }catch(e){}
+  ['fFirm','fClient','fPeriod','fPreparer','fReviewer','fPartner'].forEach(id => document.getElementById(id).value = '');
+  firmLogoDataUrl = null;
+  document.getElementById('fLogo').value = '';
+  document.getElementById('logoHint').textContent = 'PNG/JPG/SVG, under 500KB. Saved only in this browser.';
+  document.getElementById('sessionNote').style.display = 'none';
+});
+
+document.getElementById('fLogo').addEventListener('change', (e) => {
+  const file = e.target.files[0];
+  if(!file) return;
+  if(file.size > 500 * 1024){
+    alert('Please use a smaller logo file (under 500KB) so it saves reliably.');
+    e.target.value = '';
+    return;
+  }
+  const reader = new FileReader();
+  reader.onload = () => {
+    firmLogoDataUrl = reader.result;
+    document.getElementById('logoHint').textContent = 'Logo saved: ' + file.name;
+    saveEngagement();
+  };
+  reader.readAsDataURL(file);
+});
+
+loadSavedEngagement();
+
+const dropzone = document.getElementById('dropzone');
+const fileInput = document.getElementById('fileInput');
+const filenameEl = document.getElementById('filename');
+const picker = document.getElementById('picker');
+const colSelect = document.getElementById('colSelect');
+const runBtn = document.getElementById('runBtn');
+
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('keydown', e => { if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); fileInput.click(); } });
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('drag'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('drag'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('drag');
+  if(e.dataTransfer.files.length) handleFile(e.dataTransfer.files[0]);
+});
+fileInput.addEventListener('change', e => {
+  if(e.target.files.length) handleFile(e.target.files[0]);
+});
+
+const MAX_ROWS_WARN = 250000;
+
+function handleFile(file){
+  filenameEl.textContent = file.name;
+  const ext = file.name.split('.').pop().toLowerCase();
+
+  if(ext === 'csv'){
+    Papa.parse(file, {
+      header: true,
+      skipEmptyLines: true,
+      complete: res => {
+        if(res.errors && res.errors.length){
+          const fatal = res.errors.filter(e => e.type !== 'FieldMismatch');
+          if(fatal.length && (!res.data || !res.data.length)){
+            alert('Could not parse this CSV file: ' + fatal[0].message);
+            return;
+          }
+        }
+        const rawHeaderCount = (res.meta && Array.isArray(res.meta.fields)) ? res.meta.fields.length : null;
+        onParsed(res.data, rawHeaderCount);
+      },
+      error: err => alert('Could not read this CSV file: ' + err.message)
+    });
+  } else {
+    const reader = new FileReader();
+    reader.onerror = () => alert('Could not read this file. It may be corrupted or in an unsupported format.');
+    reader.onload = e => {
+      try{
+        const wb = XLSX.read(e.target.result, {type:'array'});
+        if(wb.SheetNames.length > 1){
+          promptSheetChoice(wb);
+        } else {
+          const sheet = wb.Sheets[wb.SheetNames[0]];
+          const rawRow = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''})[0] || [];
+          onParsed(XLSX.utils.sheet_to_json(sheet, {defval:''}), rawRow.length);
+        }
+      } catch(err){
+        alert('Could not parse this Excel file: ' + err.message);
+      }
+    };
+    reader.readAsArrayBuffer(file);
+  }
+}
+
+// A GL export, trial balance, or payment register workbook often has more
+// than one tab (summary + detail, or one tab per month/entity). Reading
+// only wb.SheetNames[0] would silently test the wrong data with no warning.
+// This surfaces every non-empty sheet and lets the user pick.
+function promptSheetChoice(wb){
+  const candidates = wb.SheetNames
+    .map(name => {
+      const sheet = wb.Sheets[name];
+      const rawRow = XLSX.utils.sheet_to_json(sheet, {header:1, defval:''})[0] || [];
+      return { name, rows: XLSX.utils.sheet_to_json(sheet, {defval:''}), rawHeaderCount: rawRow.length };
+    })
+    .filter(s => s.rows.length > 0);
+
+  if(!candidates.length){
+    alert('This workbook has ' + wb.SheetNames.length + ' sheet(s), but none contain data rows.');
+    return;
+  }
+  if(candidates.length === 1){
+    onParsed(candidates[0].rows, candidates[0].rawHeaderCount);
+    return;
+  }
+
+  const overlay = document.getElementById('sheetChoiceOverlay');
+  const list = document.getElementById('sheetChoiceList');
+  list.innerHTML = '';
+  candidates.forEach(s => {
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'sheet-choice-btn';
+    btn.innerHTML = `<span class="sheet-choice-name">${escapeHtml(s.name)}</span><span class="sheet-choice-meta">${s.rows.length.toLocaleString()} row(s)</span>`;
+    btn.addEventListener('click', () => {
+      overlay.classList.remove('show');
+      onParsed(s.rows, s.rawHeaderCount);
+    });
+    list.appendChild(btn);
+  });
+  overlay.classList.add('show');
+}
+
+function countValidNumeric(col){
+  if(!parsedRows || !col) return 0;
+  return parsedRows.reduce((acc, r) => {
+    const v = parseFloat(String(r[col]).replace(/[,$\s]/g,''));
+    return acc + (!isNaN(v) && v !== 0 ? 1 : 0);
+  }, 0);
+}
+
+function updateColPreview(){
+  const preview = document.getElementById('colPreview');
+  const count = countValidNumeric(colSelect.value);
+  if(count < 30){
+    preview.textContent = `Only ${count.toLocaleString()} valid numeric values found in this column — need at least 30 to run a meaningful test.`;
+    preview.classList.add('warn');
+  } else {
+    preview.textContent = `${count.toLocaleString()} valid numeric values detected in this column.`;
+    preview.classList.remove('warn');
+  }
+}
+colSelect.addEventListener('change', updateColPreview);
+
+function onParsed(rows, rawHeaderCount){
+  if(!rows || !rows.length){
+    alert('No rows found in this file. Check that it has a header row and at least one data row.');
+    return;
+  }
+  if(rows.length > MAX_ROWS_WARN){
+    const proceed = confirm(`This file has ${rows.length.toLocaleString()} rows. Very large files may be slow in-browser. Continue?`);
+    if(!proceed) return;
+  }
+  parsedRows = rows;
+  // Object.keys(rows[0]) silently collapses duplicate column names (e.g. two
+  // "Amount" columns) to one; that's a limitation of the parsers themselves.
+  // We can't recover the dropped column, but we can at least warn the user
+  // instead of letting them unknowingly test the wrong "Amount" column.
+  headers = Object.keys(rows[0]).filter(h => h !== '' && h !== '__EMPTY' && !h.startsWith('__EMPTY_'));
+  if(!headers.length) headers = Object.keys(rows[0]);
+  if(rawHeaderCount !== null && rawHeaderCount !== undefined && rawHeaderCount > headers.length){
+    alert(`Heads up: this file has ${rawHeaderCount} columns in its header row, but only ${headers.length} unique column name(s) after parsing. Two or more columns likely share the same name (e.g. "Amount" appearing twice) — the parser can only keep one. Rename the duplicate column(s) in your source file and re-upload if you need the dropped one.`);
+  }
+  colSelect.innerHTML = '';
+  headers.forEach(h => {
+    const opt = document.createElement('option');
+    opt.value = h; opt.textContent = h;
+    colSelect.appendChild(opt);
+  });
+  // Sample up to 50 rows (skipping blanks) rather than the first 10, so a
+  // column with a few empty leading cells doesn't get missed or mis-guessed.
+  const SAMPLE_SIZE = 50;
+  const guess = headers.find(h => {
+    const sample = rows.slice(0, SAMPLE_SIZE).map(r=>r[h]).filter(v=>v!=='' && v!=null);
+    return sample.length && sample.every(v => !isNaN(parseFloat(String(v).replace(/[,$\s]/g,''))));
+  });
+  if(guess) colSelect.value = guess;
+
+  picker.classList.add('show');
+  runBtn.disabled = false;
+  updateColPreview();
+
+  // Populate the two new modules' column pickers from the same header list.
+  const seqColSelect = document.getElementById('seqColSelect');
+  const sampValueCol = document.getElementById('sampValueCol');
+  [seqColSelect, sampValueCol].forEach(sel => {
+    if(!sel) return;
+    sel.innerHTML = '';
+    headers.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h; opt.textContent = h;
+      sel.appendChild(opt);
+    });
+  });
+  if(guess && sampValueCol) sampValueCol.value = guess;
+
+  const sampDateCol = document.getElementById('sampDateCol');
+  if(sampDateCol){
+    sampDateCol.innerHTML = '<option value="">— none —</option>';
+    headers.forEach(h => {
+      const opt = document.createElement('option');
+      opt.value = h; opt.textContent = h;
+      sampDateCol.appendChild(opt);
+    });
+    const dateGuess = headers.find(h => /date/i.test(h));
+    if(dateGuess) sampDateCol.value = dateGuess;
+  }
+
+  document.getElementById('sequenceSection').style.display = 'block';
+  const pullBtn = document.getElementById('pullSampleBtn');
+  const riskBtn = document.getElementById('findRiskBtn');
+  pullBtn.disabled = false; pullBtn.removeAttribute('title');
+  riskBtn.disabled = false; riskBtn.removeAttribute('title');
+  const sampNote = document.getElementById('sampNote');
+  if(sampNote) sampNote.textContent = 'File loaded — pick the amount column above, then calculate a sample size and pull the sample.';
+}
+
+// ---------------- sample/demo data ----------------
+// Generates a synthetic vendor-payments ledger for people who want to see
+// how the tool behaves before uploading real client data. The bulk of the
+// amounts are drawn log-uniformly (which is naturally Benford-conforming),
+// with three deliberately injected anomalies — a cluster just under a round
+// approval threshold, a block of exact-duplicate amounts, and a batch of
+// suspiciously round figures — so a first-time user immediately sees what a
+// FLAG looks like across the different tests, not just a PASS.
+function randomSampleDate(){
+  const start = new Date(2025, 6, 1).getTime();
+  const end = new Date(2026, 5, 30).getTime();
+  return new Date(start + Math.random() * (end - start)).toISOString().slice(0, 10);
+}
+
+function generateSampleRows(){
+  const vendors = ['Al-Noor Traders','Zenith Textiles','Crescent Logistics','Metro Office Supplies','Falcon Freight','Bright Star Printing','Horizon Consulting','Prime Hardware','Silver Leaf Catering','Nova Packaging'];
+  const rows = [];
+  let invNo = 10000;
+
+  for(let i = 0; i < 900; i++){
+    const magnitude = [10, 100, 1000, 10000][Math.floor(Math.random() * 4)];
+    const mantissa = Math.pow(10, Math.random()); // log-uniform 1–10 => Benford-conforming
+    const amount = Math.round(mantissa * (magnitude / 10) * 100) / 100;
+    rows.push({ Date: randomSampleDate(), Vendor: vendors[Math.floor(Math.random()*vendors.length)], Description: 'Invoice #' + (invNo++), Amount: amount });
+  }
+  // Structuring signal: cluster of payments just under an assumed $50,000 approval threshold.
+  for(let i = 0; i < 25; i++){
+    rows.push({ Date: randomSampleDate(), Vendor: 'Horizon Consulting', Description: 'Invoice #' + (invNo++), Amount: 49000 + Math.floor(Math.random() * 900) });
+  }
+  // Duplicate-amount signal: the same exact figure repeated well beyond chance.
+  for(let i = 0; i < 12; i++){
+    rows.push({ Date: randomSampleDate(), Vendor: 'Prime Hardware', Description: 'Invoice #' + (invNo++), Amount: 24999.00 });
+  }
+  // Round-number signal: a batch of suspiciously tidy, estimated-looking amounts.
+  for(let i = 0; i < 40; i++){
+    rows.push({ Date: randomSampleDate(), Vendor: 'Bright Star Printing', Description: 'Invoice #' + (invNo++), Amount: (Math.floor(Math.random() * 20) + 1) * 1000 });
+  }
+  return rows;
+}
+
+document.getElementById('sampleBtn').addEventListener('click', () => {
+  filenameEl.textContent = 'sample-vendor-payments.csv (demo data — not a real file)';
+  onParsed(generateSampleRows());
+  if(headers.includes('Amount')) colSelect.value = 'Amount';
+  updateColPreview();
+});
+
+// ---------------- analysis ----------------
+runBtn.addEventListener('click', runAnalysis);
+let lastResult = null;
+
+function runAnalysis(){
+  runBtn.classList.add('loading');
+  runBtn.disabled = true;
+  setTimeout(() => {
+    try{ doAnalysis(); } finally {
+      runBtn.classList.remove('loading');
+      runBtn.disabled = false;
+    }
+  }, 50);
+}
+
+// Extracts the leading significant digits of a positive number as a string,
+// without relying on Number.prototype.toString() (which switches to
+// exponential notation for very large/small values, e.g. 5e-7, and would
+// otherwise corrupt digit extraction).
+function leadingDigits(v){
+  if(!(v > 0)) return '';
+  let mantissa = v.toExponential(15).split('e')[0]; // e.g. "1.234500000000000"
+  const digits = mantissa.replace('-','').replace('.','');
+  return digits.replace(/0+$/,'') || '0';
+}
+
+// Classifies the integer part of a value by how many trailing zeros it has,
+// as a proxy for "roundness". Naturally occurring, unmanipulated transaction
+// amounts are expected to hit these buckets at roughly the rates a uniform
+// last-digit distribution would predict (~90% / 9% / 0.9% / 0.1%); a heavy
+// skew toward "Ends in 00"/"Ends in 000+" is a classic estimation/fabrication
+// signal in audit literature, distinct from (and complementary to) Benford's Law.
+function trailingZeroBucket(intPart){
+  if(intPart === 0) return 'Not round';
+  const s = String(intPart);
+  let z = 0;
+  for(let i = s.length - 1; i >= 0; i--){
+    if(s[i] === '0') z++; else break;
+  }
+  if(z >= 3) return 'Ends in 000+';
+  if(z === 2) return 'Ends in 00';
+  if(z === 1) return 'Ends in 0';
+  return 'Not round';
+}
+
+function doAnalysis(){
+  const col = colSelect.value;
+  const alpha = parseFloat(document.getElementById('alphaSelect').value) || 0.05;
+
+  // Build one record per valid numeric row, carrying the classification keys
+  // for every test alongside a reference back to the original row. This is
+  // what makes the click-to-drill-down feature possible — without it we'd
+  // only ever have aggregate bucket counts, not the actual transactions.
+  const records = [];
+  parsedRows.forEach(row => {
+    const v = parseFloat(String(row[col]).replace(/[,$\s]/g,''));
+    if(isNaN(v) || v === 0) return;
+    const av = Math.abs(v);
+    const s = leadingDigits(av);
+    if(!s.length) return;
+    const d1 = parseInt(s[0]);
+    const d2 = s.length >= 2 ? parseInt(s[1]) : null;
+    const d12raw = s.length >= 2 ? parseInt(s.substring(0,2)) : null;
+    const d12 = (d12raw !== null && d12raw >= 10) ? d12raw : null;
+    const lastTwoKey = String(Math.floor(av) % 100).padStart(2,'0');
+    const roundKey = trailingZeroBucket(Math.floor(av));
+    records.push({ row, value: v, absValue: av, d1, d2, d12, lastTwoKey, roundKey });
+  });
+
+  if(records.length < 30){
+    alert('Need at least 30 valid numeric values to run a meaningful test. Found ' + records.length + '.');
+    return;
+  }
+
+  const nums = records.map(r => r.absValue);
+  const n = records.length;
+
+  const d1counts = {}; for(let d=1; d<=9; d++) d1counts[d]=0;
+  const d2counts = {}; for(let d=0; d<=9; d++) d2counts[d]=0;
+  const d12counts = {}; for(let d=10; d<=99; d++) d12counts[d]=0;
+  const lastTwoCounts = {}; for(let i=0; i<100; i++) lastTwoCounts[String(i).padStart(2,'0')]=0;
+  const roundCounts = { 'Not round':0, 'Ends in 0':0, 'Ends in 00':0, 'Ends in 000+':0 };
+
+  records.forEach(r => {
+    d1counts[r.d1] = (d1counts[r.d1]||0) + 1;
+    if(r.d2 !== null) d2counts[r.d2] = (d2counts[r.d2]||0) + 1;
+    if(r.d12 !== null) d12counts[r.d12] = (d12counts[r.d12]||0) + 1;
+    lastTwoCounts[r.lastTwoKey]++;
+    roundCounts[r.roundKey]++;
+  });
+
+  function buildSeries(counts, expected, keys){
+    return keys.map(k => {
+      const actual = (counts[k]||0) / n;
+      const exp = expected[k];
+      return { key:k, expected:exp, actual, count: counts[k]||0, dev: actual - exp };
+    });
+  }
+
+  const d1series = buildSeries(d1counts, benfordD1, [1,2,3,4,5,6,7,8,9]);
+  const d2series = buildSeries(d2counts, benfordD2, [0,1,2,3,4,5,6,7,8,9]);
+  const d12series = buildSeries(d12counts, benfordD12, Array.from({length:90},(_,i)=>i+10));
+  const lastTwoSeries = buildSeries(lastTwoCounts, lastTwoExpected, Array.from({length:100},(_,i)=>String(i).padStart(2,'0')));
+  const roundSeries = buildSeries(roundCounts, roundExpected, ['Not round','Ends in 0','Ends in 00','Ends in 000+']);
+
+  // Nigrini's MAD conformity thresholds are specific to which digit test is
+  // being scored — the first-digit thresholds do NOT apply to the second-digit
+  // or first-two-digits tests, which use much tighter bands. (Nigrini, 2012.)
+  const MAD_THRESHOLDS = {
+    d1:  [0.006, 0.012, 0.015],
+    d2:  [0.008, 0.010, 0.012],
+    d12: [0.0012, 0.0018, 0.0022]
+  };
+
+  function scoreSeries(series, thresholds, df){
+    const mad = series.reduce((s,r)=>s+Math.abs(r.dev),0) / series.length;
+    const chi = series.reduce((s,r)=>{
+      const expCount = r.expected * n;
+      return s + Math.pow(r.count - expCount, 2) / expCount;
+    }, 0);
+    const pValue = chiSquarePValue(chi, df);
+    const [t1, t2, t3] = thresholds;
+    let conformity, flagged;
+    if(mad < t1){ conformity='Close conformity'; flagged=false; }
+    else if(mad < t2){ conformity='Acceptable conformity'; flagged=false; }
+    else if(mad < t3){ conformity='Marginally acceptable'; flagged=true; }
+    else { conformity='Nonconformity — recommend follow-up'; flagged=true; }
+    return { mad, chi, df, pValue, conformity, flagged };
+  }
+
+  // Round-number test has no Nigrini-published MAD scale (that scale is
+  // specific to Benford digit tests), so it's scored on a plain excess-ratio
+  // basis instead of borrowing false precision from a table that doesn't cover it.
+  function scoreRoundSeries(series){
+    const mad = series.reduce((s,r)=>s+Math.abs(r.dev),0) / series.length;
+    const chi = series.reduce((s,r)=>{
+      const expCount = r.expected * n;
+      return s + Math.pow(r.count - expCount, 2) / expCount;
+    }, 0);
+    const df = series.length - 1;
+    const pValue = chiSquarePValue(chi, df);
+    const roundActual = series.filter(s=>s.key!=='Not round').reduce((a,s)=>a+s.actual,0);
+    const roundExp = series.filter(s=>s.key!=='Not round').reduce((a,s)=>a+s.expected,0);
+    const ratio = roundExp > 0 ? roundActual / roundExp : 0;
+    let conformity, flagged;
+    if(ratio >= 2){ conformity = `Round numbers appear ~${ratio.toFixed(1)}× more often than expected`; flagged = true; }
+    else if(ratio >= 1.4){ conformity = `Round numbers appear somewhat elevated (${ratio.toFixed(1)}× expected)`; flagged = true; }
+    else { conformity = 'Round-number rate looks normal'; flagged = false; }
+    return { mad, chi, df, pValue, conformity, flagged, ratio, roundActual, roundExp };
+  }
+
+  // Last-two-digits test: expects a UNIFORM distribution (each pair 00–99 at
+  // 1%), not Benford's Law, so Nigrini's digit-test MAD bands don't apply here
+  // either. Published MAD bands for this specific test exist in the audit
+  // literature but aren't reproduced consistently enough across sources to
+  // assert with confidence, so — rather than risk a wrong threshold — this
+  // test is scored on the chi-square p-value (statistical significance of the
+  // deviation from uniform) instead of a conformity table.
+  // The p-value cutoff is user-adjustable (alpha selector) because unlike the
+  // Nigrini MAD tables above — which are fixed, published thresholds — this
+  // test's "how strict" question is a judgment call the auditor should own.
+  function scoreLastTwoSeries(series, alpha){
+    const mad = series.reduce((s,r)=>s+Math.abs(r.dev),0) / series.length;
+    const chi = series.reduce((s,r)=>{
+      const expCount = r.expected * n;
+      return s + Math.pow(r.count - expCount, 2) / expCount;
+    }, 0);
+    const df = series.length - 1;
+    const pValue = chiSquarePValue(chi, df);
+    const marginalCutoff = Math.min(alpha * 5, 0.5);
+    let conformity, flagged;
+    if(pValue < alpha){ conformity = `Significant deviation from uniform (p < ${alpha}) — recommend follow-up`; flagged = true; }
+    else if(pValue < marginalCutoff){ conformity = `Marginal deviation from uniform (p < ${marginalCutoff.toFixed(2)})`; flagged = true; }
+    else { conformity = 'Last-two-digit pattern looks consistent with a uniform distribution'; flagged = false; }
+    return { mad, chi, df, pValue, conformity, flagged };
+  }
+
+  // Nigrini's "number duplication" test: real transaction populations rarely
+  // repeat the exact same amount many times. There's no single published
+  // statistical threshold for this (unlike the digit tests above), so it's
+  // scored as a practical screening heuristic — flag if the most-repeated
+  // amount occurs more than max(5, 1% of population) times.
+  function computeDuplicateTest(records, n){
+    const groups = {};
+    records.forEach(r => {
+      const key = r.absValue.toFixed(2);
+      (groups[key] = groups[key] || []).push(r);
+    });
+    const entries = Object.keys(groups)
+      .map(key => ({ amount: parseFloat(key), count: groups[key].length, records: groups[key] }))
+      .filter(e => e.count > 1)
+      .sort((a,b) => b.count - a.count);
+
+    const threshold = Math.max(5, Math.ceil(n * 0.01));
+    const maxCount = entries.length ? entries[0].count : 0;
+    return {
+      entries: entries.slice(0, 15),
+      totalDuplicateGroups: entries.length,
+      threshold,
+      maxCount,
+      flagged: maxCount > threshold
+    };
+  }
+
+  // Nigrini's second-order test: sort amounts ascending, take the gaps between
+  // consecutive values, and test THOSE gaps' leading digits against Benford's
+  // Law. Genuine transaction-level data tends to pass this regardless of the
+  // shape of the underlying amounts, which makes it a useful independent
+  // cross-check against the first-digit test above (same MAD scale applies
+  // since it's still a first-digit test, just on a derived series).
+  function computeSecondOrderTest(records){
+    const sorted = [...records].sort((a,b) => a.absValue - b.absValue);
+    const diffs = [];
+    for(let i = 1; i < sorted.length; i++){
+      const gap = sorted[i].absValue - sorted[i-1].absValue;
+      if(gap > 0){
+        const s = leadingDigits(gap);
+        if(s.length) diffs.push({ gap, d1: parseInt(s[0]), lowRecord: sorted[i-1], highRecord: sorted[i] });
+      }
+    }
+    const dn = diffs.length;
+    const counts = {}; for(let d=1; d<=9; d++) counts[d]=0;
+    diffs.forEach(x => counts[x.d1]++);
+    const series = [1,2,3,4,5,6,7,8,9].map(k => {
+      const actual = dn ? (counts[k]||0)/dn : 0;
+      const exp = benfordD1[k];
+      return { key:k, expected:exp, actual, count:counts[k]||0, dev:actual-exp };
+    });
+    const stats = dn >= 30 ? scoreSeries(series, MAD_THRESHOLDS.d1, 8) : { mad:0, chi:0, df:8, pValue:1, conformity:'Not enough gaps to test (need at least 30)', flagged:false };
+    return { diffs, series, stats, n: dn };
+  }
+
+  const d1stats = scoreSeries(d1series, MAD_THRESHOLDS.d1, 8);
+  const d2stats = scoreSeries(d2series, MAD_THRESHOLDS.d2, 9);
+  const d12stats = scoreSeries(d12series, MAD_THRESHOLDS.d12, 89);
+  const lastTwoStats = scoreLastTwoSeries(lastTwoSeries, alpha);
+  const roundStats = scoreRoundSeries(roundSeries);
+  const dup = computeDuplicateTest(records, n);
+  const secondOrder = computeSecondOrderTest(records);
+
+  lastResult = {
+    d1series, d2series, d12series, lastTwoSeries, roundSeries, n, nums, records, alpha, dup, secondOrder,
+    stats: { d1: d1stats, d2: d2stats, d12: d12stats, lastTwo: lastTwoStats, round: roundStats }
+  };
+  renderResults();
+}
+
+// Re-run with the new alpha whenever the user changes it after a test has
+// already been run, so the last-two-digit verdict reflects their choice
+// without them having to re-upload the file.
+document.getElementById('alphaSelect').addEventListener('change', () => {
+  if(lastResult) doAnalysis();
+});
+
+function chiSquarePValue(chi, df){
+  const x = chi/df;
+  const z = (Math.pow(x, 1/3) - (1 - 2/(9*df))) / Math.sqrt(2/(9*df));
+  return 1 - normCdf(z);
+}
+function normCdf(z){ return 0.5 * (1 + erf(z/Math.sqrt(2))); }
+function erf(x){
+  const sign = x<0 ? -1 : 1; x = Math.abs(x);
+  const a1=0.254829592,a2=-0.284496736,a3=1.421413741,a4=-1.453152027,a5=1.061405429,p=0.3275911;
+  const t = 1/(1+p*x);
+  const y = 1 - (((((a5*t+a4)*t)+a3)*t+a2)*t+a1)*t*Math.exp(-x*x);
+  return sign*y;
+}
+
+// ---------------- count-up animation ----------------
+function countUp(el, target, decimals, duration){
+  const start = 0;
+  const startTime = performance.now();
+  function tick(now){
+    const p = Math.min(1, (now-startTime)/duration);
+    const eased = 1 - Math.pow(1-p, 3);
+    const val = start + (target-start)*eased;
+    el.textContent = decimals > 0 ? val.toFixed(decimals) : Math.round(val).toLocaleString();
+    if(p < 1) requestAnimationFrame(tick);
+    else el.textContent = decimals > 0 ? target.toFixed(decimals) : Math.round(target).toLocaleString();
+  }
+  requestAnimationFrame(tick);
+}
+
+const MODE_LABELS = { d1: 'first digit', d2: 'second digit', d12: 'first two digits', lastTwo: 'last two digits', round: 'round-number' };
+
+function renderVerdictAndStats(mode){
+  const r = lastResult;
+  const s = r.stats[mode];
+
+  const verdict = document.getElementById('verdict');
+  verdict.classList.toggle('flagged', s.flagged);
+  document.getElementById('verdictMark').textContent = s.flagged ? 'FLAG' : 'PASS';
+  document.getElementById('verdictTitle').textContent = s.conformity;
+  document.getElementById('verdictDisclaimer').style.display = s.flagged ? 'block' : 'none';
+  document.getElementById('verdictSub').textContent = (mode === 'round'
+    ? (s.flagged
+        ? 'A high rate of round numbers can indicate estimated, rounded, or fabricated amounts rather than genuine transaction-level data.'
+        : 'Trailing-zero frequency in this population is close to what naturally occurring amounts would show.')
+    : mode === 'lastTwo'
+    ? (s.flagged
+        ? 'This population\'s last-two-digit pairs cluster more than a uniform distribution would predict — a pattern associated with rounded, estimated, or duplicated amounts rather than genuine transaction-level data.'
+        : 'This population\'s last-two-digit pairs are close to the uniform spread expected of genuine transaction-level amounts.')
+    : (s.flagged
+        ? `This population's ${MODE_LABELS[mode]} distribution deviates from Benford's Law more than expected by chance — consider follow-up procedures.`
+        : `This population's ${MODE_LABELS[mode]} distribution matches Benford's Law within normal tolerance.`));
+
+  countUp(document.getElementById('statN'), r.n, 0, 800);
+  countUp(document.getElementById('statMAD'), s.mad, 4, 900);
+  countUp(document.getElementById('statChi'), s.chi, 2, 900);
+  document.getElementById('statP').textContent = s.pValue < 0.0001 ? '<0.0001' : s.pValue.toFixed(4);
+}
+
+function renderResults(){
+  const resultsEl = document.getElementById('results');
+  resultsEl.classList.remove('show');
+  void resultsEl.offsetWidth; // restart animation
+  resultsEl.classList.add('show');
+
+  currentMode = 'd1';
+  document.querySelectorAll('.chart-tab').forEach(b=>{
+    const active = b.dataset.mode === 'd1';
+    b.classList.toggle('active', active);
+    b.setAttribute('aria-selected', String(active));
+  });
+
+  renderVerdictAndStats('d1');
+  drawChart('d1');
+  renderTable('d1');
+
+  document.getElementById('structuringSection').style.display = 'block';
+  document.getElementById('duplicatesSection').style.display = 'block';
+  document.getElementById('secondOrderSection').style.display = 'block';
+  renderDuplicates();
+  renderSecondOrder();
+
+  resultsEl.scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function renderSecondOrder(){
+  const so = lastResult.secondOrder;
+  const s = so.stats;
+  const verdict = document.getElementById('soVerdict');
+  verdict.classList.toggle('flagged', s.flagged);
+  document.getElementById('soMark').textContent = s.flagged ? 'FLAG' : 'PASS';
+  document.getElementById('soTitle').textContent = s.flagged ? 'Deviates from Benford\'s Law' : 'Consistent with Benford\'s Law';
+  document.getElementById('soSub').textContent = s.flagged
+    ? 'The digit pattern of gaps between consecutive sorted amounts deviates more than chance would predict — a signal sometimes associated with invented or copy-edited figures, worth a closer look alongside the tests above.'
+    : 'The digit pattern of gaps between consecutive sorted amounts looks like genuine transaction-level data, independent of the first-digit result above.';
+  document.getElementById('soN').textContent = so.n.toLocaleString();
+  document.getElementById('soMAD').textContent = s.mad.toFixed(4);
+  document.getElementById('soP').textContent = s.pValue === undefined ? '—' : (s.pValue < 0.0001 ? '<0.0001' : s.pValue.toFixed(4));
+
+  const body = document.getElementById('soBody');
+  body.innerHTML = '';
+  so.series.forEach(row => {
+    const anomaly = Math.abs(row.dev) > 0.02;
+    const tr = document.createElement('tr');
+    tr.classList.add('row-clickable');
+    if(anomaly) tr.classList.add('anomaly');
+    tr.innerHTML = `
+      <td>${row.key}</td>
+      <td>${(row.expected*100).toFixed(2)}%</td>
+      <td>${(row.actual*100).toFixed(2)}%</td>
+      <td>${row.count.toLocaleString()}</td>
+      <td>${row.dev>=0?'+':''}${(row.dev*100).toFixed(2)}%</td>
+    `;
+    tr.addEventListener('click', () => {
+      const matches = so.diffs.filter(x => x.d1 === row.key);
+      const recSet = new Map();
+      matches.forEach(m => { recSet.set(m.lowRecord, m.lowRecord); recSet.set(m.highRecord, m.highRecord); });
+      const recs = Array.from(recSet.values());
+      openDrilldown(
+        recs,
+        `Second-order digit = ${row.key}`,
+        `${recs.length.toLocaleString()} transaction(s) bracket a gap whose leading digit is ${row.key}, out of ${so.n.toLocaleString()} gaps tested.`
+      );
+    });
+    body.appendChild(tr);
+  });
+}
+
+function renderDuplicates(){
+  const d = lastResult.dup;
+  const verdict = document.getElementById('dupVerdict');
+  verdict.classList.toggle('flagged', d.flagged);
+  document.getElementById('dupMark').textContent = d.flagged ? 'FLAG' : 'PASS';
+  document.getElementById('dupTitle').textContent = d.flagged
+    ? `Top duplicate amount repeats ${d.maxCount}× — above the ${d.threshold}× screening threshold`
+    : 'No amount repeats often enough to flag';
+  document.getElementById('dupSub').textContent = d.totalDuplicateGroups
+    ? `${d.totalDuplicateGroups.toLocaleString()} distinct amount(s) repeat more than once across ${lastResult.n.toLocaleString()} entries tested.`
+    : `Every one of the ${lastResult.n.toLocaleString()} tested amounts is unique, or repeats only once.`;
+
+  const body = document.getElementById('dupBody');
+  body.innerHTML = '';
+  if(!d.entries.length){
+    body.innerHTML = '<tr><td colspan="4" style="color:var(--ink-soft);text-align:left;">No repeated amounts found.</td></tr>';
+    return;
+  }
+  d.entries.forEach(e => {
+    const tr = document.createElement('tr');
+    tr.classList.add('row-clickable');
+    if(e.count > d.threshold) tr.classList.add('anomaly');
+    tr.innerHTML = `
+      <td>${e.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td>
+      <td>${e.count}</td>
+      <td>${((e.count/lastResult.n)*100).toFixed(2)}%</td>
+      <td><button class="link-btn" type="button">View rows</button></td>
+    `;
+    const openThis = (ev) => {
+      if(ev) ev.stopPropagation();
+      openDrilldown(
+        e.records,
+        `Amount = ${e.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}`,
+        `${e.count.toLocaleString()} entries share this exact amount.`
+      );
+    };
+    tr.querySelector('button').addEventListener('click', openThis);
+    tr.addEventListener('click', openThis);
+    body.appendChild(tr);
+  });
+}
+
+// ---------------- drill-down ----------------
+function lookupRecords(mode, key){
+  if(mode === 'd1') return lastResult.records.filter(r => r.d1 === Number(key));
+  if(mode === 'd2') return lastResult.records.filter(r => r.d2 === Number(key));
+  if(mode === 'd12') return lastResult.records.filter(r => r.d12 === Number(key));
+  if(mode === 'lastTwo') return lastResult.records.filter(r => r.lastTwoKey === String(key));
+  if(mode === 'round') return lastResult.records.filter(r => r.roundKey === String(key));
+  return [];
+}
+
+function escapeHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+
+const DRILLDOWN_CAP = 300;
+
+function openDrilldown(records, title, subtitle){
+  const overlay = document.getElementById('drilldownOverlay');
+  document.getElementById('drilldownTitle').textContent = title;
+  document.getElementById('drilldownSub').textContent = records.length > DRILLDOWN_CAP
+    ? `${subtitle} Showing the first ${DRILLDOWN_CAP.toLocaleString()} — export for the full list.`
+    : subtitle;
+
+  const head = document.getElementById('drilldownHead');
+  const body = document.getElementById('drilldownBody');
+  head.innerHTML = '<tr>' + headers.map(h => `<th>${escapeHtml(h)}</th>`).join('') + '</tr>';
+  body.innerHTML = '';
+  records.slice(0, DRILLDOWN_CAP).forEach(r => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = headers.map(h => `<td>${escapeHtml(r.row[h] ?? '')}</td>`).join('');
+    body.appendChild(tr);
+  });
+
+  document.getElementById('drilldownExport').onclick = () => exportDrilldownCsv(records);
+  overlay.classList.add('show');
+}
+
+function closeDrilldown(){
+  document.getElementById('drilldownOverlay').classList.remove('show');
+}
+document.getElementById('drilldownClose').addEventListener('click', closeDrilldown);
+document.getElementById('drilldownOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'drilldownOverlay') closeDrilldown();
+});
+document.addEventListener('keydown', (e) => {
+  if(e.key === 'Escape'){
+    closeDrilldown();
+    document.getElementById('sheetChoiceOverlay').classList.remove('show');
+  }
+});
+document.getElementById('sheetChoiceClose').addEventListener('click', () => {
+  document.getElementById('sheetChoiceOverlay').classList.remove('show');
+});
+document.getElementById('sheetChoiceOverlay').addEventListener('click', (e) => {
+  if(e.target.id === 'sheetChoiceOverlay') e.currentTarget.classList.remove('show');
+});
+
+function exportDrilldownCsv(records){
+  const rows = [headers];
+  records.forEach(r => rows.push(headers.map(h => r.row[h])));
+  const csv = rows.map(row => row.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'ledgerprint-drilldown.csv';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+let currentMode = 'd1';
+document.querySelectorAll('.chart-tab').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.chart-tab').forEach(b=>{ b.classList.remove('active'); b.setAttribute('aria-selected','false'); });
+    btn.classList.add('active');
+    btn.setAttribute('aria-selected','true');
+    currentMode = btn.dataset.mode;
+    renderVerdictAndStats(currentMode);
+    drawChart(currentMode);
+    renderTable(currentMode);
+  });
+});
+
+function seriesFor(mode){
+  if(mode==='d1') return lastResult.d1series;
+  if(mode==='d2') return lastResult.d2series;
+  if(mode==='round') return lastResult.roundSeries;
+  if(mode==='lastTwo') return lastResult.lastTwoSeries;
+  return lastResult.d12series;
+}
+
+function drawChart(mode){
+  const series = seriesFor(mode);
+  const svg = document.getElementById('chart');
+  const tooltip = document.getElementById('tooltip');
+  const W = 860, H = 320, padL = 40, padB = 30, padT = 10;
+  const plotW = W - padL - 10, plotH = H - padT - padB;
+  const maxVal = Math.max(...series.map(s=>Math.max(s.expected, s.actual))) * 1.15;
+  const barW = plotW / series.length;
+
+  let svgContent = '';
+  svgContent += `<line x1="${padL}" y1="${padT}" x2="${padL}" y2="${H-padB}" stroke="#8f9a83" stroke-width="1"/>`;
+  svgContent += `<line x1="${padL}" y1="${H-padB}" x2="${W-10}" y2="${H-padB}" stroke="#8f9a83" stroke-width="1"/>`;
+
+  series.forEach((s, i) => {
+    const x = padL + i*barW;
+    const expH = (s.expected/maxVal) * plotH;
+    const actH = (s.actual/maxVal) * plotH;
+    const subW = barW * 0.36;
+
+    svgContent += `<rect class="bar-hit" data-key="${s.key}" data-kind="expected" x="${x + barW*0.08}" y="${H-padB-expH}" width="${subW}" height="${expH}" fill="#b7c4ab"/>`;
+    svgContent += `<rect class="bar-hit" data-key="${s.key}" data-kind="actual" x="${x + barW*0.08 + subW + 2}" y="${H-padB-actH}" width="${subW}" height="${actH}" fill="#24382c"/>`;
+
+    if(series.length <= 20){
+      svgContent += `<text x="${x + barW/2}" y="${H-padB+16}" font-size="11" fill="#3d453a" text-anchor="middle">${s.key}</text>`;
+    } else if(i % 10 === 0){
+      svgContent += `<text x="${x + barW/2}" y="${H-padB+16}" font-size="10" fill="#3d453a" text-anchor="middle">${s.key}</text>`;
+    }
+  });
+
+  for(let t=0; t<=4; t++){
+    const val = (maxVal/4)*t;
+    const y = H - padB - (val/maxVal)*plotH;
+    svgContent += `<text x="${padL-6}" y="${y+4}" font-size="10" fill="#3d453a" text-anchor="end">${(val*100).toFixed(0)}%</text>`;
+  }
+
+  svg.innerHTML = svgContent;
+
+  svg.querySelectorAll('.bar-hit').forEach(rect => {
+    rect.addEventListener('mousemove', e => {
+      const key = rect.dataset.key, kind = rect.dataset.kind;
+      const s = series.find(x => String(x.key) === key);
+      const val = kind === 'expected' ? s.expected : s.actual;
+      tooltip.textContent = `Digit ${key} · ${kind}: ${(val*100).toFixed(2)}%`;
+      const rectBounds = svg.getBoundingClientRect();
+      const wrapBounds = svg.parentElement.getBoundingClientRect();
+      tooltip.style.left = (e.clientX - wrapBounds.left + 12) + 'px';
+      tooltip.style.top = (e.clientY - wrapBounds.top - 30) + 'px';
+      tooltip.classList.add('show');
+    });
+    rect.addEventListener('mouseleave', () => tooltip.classList.remove('show'));
+    rect.addEventListener('click', () => {
+      const key = rect.dataset.key;
+      const recs = lookupRecords(mode, key);
+      openDrilldown(
+        recs,
+        `${MODE_LABELS[mode]} = ${key}`,
+        `${recs.length.toLocaleString()} matching transaction(s) out of ${lastResult.n.toLocaleString()} tested.`
+      );
+    });
+  });
+}
+
+function renderTable(mode){
+  const series = seriesFor(mode);
+  const tbody = document.getElementById('detailBody');
+  tbody.innerHTML = '';
+  series.forEach(s => {
+    const devAbs = Math.abs(s.dev);
+    const isAnomaly = devAbs > 0.02;
+    const tr = document.createElement('tr');
+    if(isAnomaly) tr.classList.add('anomaly');
+    tr.classList.add('row-clickable');
+    tr.innerHTML = `
+      <td>${s.key}</td>
+      <td>${(s.expected*100).toFixed(2)}%</td>
+      <td>${(s.actual*100).toFixed(2)}%</td>
+      <td>${s.count.toLocaleString()}</td>
+      <td>${s.dev>=0?'+':''}${(s.dev*100).toFixed(2)}%</td>
+    `;
+    tr.addEventListener('click', () => {
+      const recs = lookupRecords(mode, s.key);
+      openDrilldown(
+        recs,
+        `${MODE_LABELS[mode]} = ${s.key}`,
+        `${recs.length.toLocaleString()} matching transaction(s) out of ${lastResult.n.toLocaleString()} tested.`
+      );
+    });
+    tbody.appendChild(tr);
+  });
+}
+
+function fillLetterheadForPrint(){
+  const firm = document.getElementById('fFirm').value;
+  const client = document.getElementById('fClient').value;
+  const period = document.getElementById('fPeriod').value;
+  const preparer = document.getElementById('fPreparer').value;
+  document.getElementById('phFirm').textContent = firm || 'LedgerPrint Workpaper';
+  document.getElementById('phClient').textContent = client || '—';
+  document.getElementById('phPeriod').textContent = period || '—';
+  document.getElementById('phPreparer').textContent = preparer || '—';
+  document.getElementById('phReviewer').textContent = document.getElementById('fReviewer').value || '—';
+  document.getElementById('phPartner').textContent = document.getElementById('fPartner').value || '—';
+  document.getElementById('phStamp').textContent = 'Generated ' + new Date().toLocaleString();
+  const phLogo = document.getElementById('phLogo');
+  if(firmLogoDataUrl){ phLogo.src = firmLogoDataUrl; phLogo.style.display = 'inline-block'; }
+  else { phLogo.style.display = 'none'; }
+  return { firm, client };
+}
+
+document.getElementById('printBtn').addEventListener('click', () => {
+  const oldTitle = document.title;
+  const { firm, client } = fillLetterheadForPrint();
+  if(firm || client) document.title = `${client || 'Engagement'} — Benford's Law Test — ${firm || ''}`;
+  window.print();
+  document.title = oldTitle;
+});
+
+// Builds one continuous report combining the executive summary and every
+// test's verdict, stats, and table — so a reviewer only has to print once
+// instead of switching tabs and printing five separate times.
+function buildFullReportHTML(){
+  const r = lastResult;
+  const modes = ['d1','d2','d12','lastTwo','round'];
+  const pct = v => v === undefined ? '—' : (v < 0.0001 ? '<0.0001' : v.toFixed(4));
+
+  let html = `<div class="fr-summary"><h2>Executive summary</h2>
+    <table class="fr-summary-table"><thead><tr><th>Test</th><th>Verdict</th><th>Key statistic</th></tr></thead><tbody>`;
+  modes.forEach(m => {
+    const s = r.stats[m];
+    html += `<tr class="${s.flagged?'fr-flag':''}"><td>${MODE_LABELS[m]}</td><td>${s.flagged?'FLAG':'PASS'}</td><td>p ${s.pValue<0.0001?'< 0.0001':'= '+s.pValue.toFixed(4)}</td></tr>`;
+  });
+  html += `<tr class="${r.dup.flagged?'fr-flag':''}"><td>Duplicate amounts</td><td>${r.dup.flagged?'FLAG':'PASS'}</td><td>Top repeat: ${r.dup.maxCount}×</td></tr>`;
+  const soS = r.secondOrder.stats;
+  html += `<tr class="${soS.flagged?'fr-flag':''}"><td>Second-order (digit gaps)</td><td>${soS.flagged?'FLAG':'PASS'}</td><td>p ${pct(soS.pValue)}</td></tr>`;
+  html += `</tbody></table></div>`;
+
+  modes.forEach((m, idx) => {
+    const s = r.stats[m];
+    const series = seriesFor(m);
+    html += `<div class="fr-section"><h2>${idx+2}. ${MODE_LABELS[m]} test</h2>
+      <div class="fr-verdict ${s.flagged?'fr-flag':''}"><b>${s.flagged?'FLAG':'PASS'}</b> — ${escapeHtml(s.conformity)}</div>
+      <p class="fr-stats">Entries: ${r.n.toLocaleString()} · MAD: ${s.mad.toFixed(4)} · Chi-square: ${s.chi.toFixed(2)} · p-value: ${pct(s.pValue)}</p>
+      <table class="fr-table"><thead><tr><th>Key</th><th>Expected %</th><th>Actual %</th><th>Count</th><th>Deviation</th></tr></thead><tbody>`;
+    series.forEach(row => {
+      const anomaly = Math.abs(row.dev) > 0.02;
+      html += `<tr class="${anomaly?'fr-anomaly':''}"><td>${row.key}</td><td>${(row.expected*100).toFixed(2)}%</td><td>${(row.actual*100).toFixed(2)}%</td><td>${row.count.toLocaleString()}</td><td>${row.dev>=0?'+':''}${(row.dev*100).toFixed(2)}%</td></tr>`;
+    });
+    html += `</tbody></table></div>`;
+  });
+
+  const d = r.dup;
+  html += `<div class="fr-section"><h2>7. Duplicate amount check</h2>
+    <div class="fr-verdict ${d.flagged?'fr-flag':''}"><b>${d.flagged?'FLAG':'PASS'}</b> — ${d.flagged ? `Top duplicate repeats ${d.maxCount}× (screening threshold ${d.threshold}×)` : 'No amount repeats unusually often'}</div>
+    <table class="fr-table"><thead><tr><th>Amount</th><th>Occurrences</th><th>% of population</th></tr></thead><tbody>`;
+  if(d.entries.length){
+    d.entries.forEach(e => {
+      html += `<tr class="${e.count>d.threshold?'fr-anomaly':''}"><td>${e.amount.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${e.count}</td><td>${((e.count/r.n)*100).toFixed(2)}%</td></tr>`;
+    });
+  } else {
+    html += `<tr><td colspan="3">No repeated amounts found.</td></tr>`;
+  }
+  html += `</tbody></table></div>`;
+
+  html += `<div class="fr-section"><h2>8. Second-order test (digit differences)</h2>
+    <div class="fr-verdict ${soS.flagged?'fr-flag':''}"><b>${soS.flagged?'FLAG':'PASS'}</b> — Gaps between consecutive sorted amounts tested against Benford's Law.</div>
+    <p class="fr-stats">Gaps tested: ${r.secondOrder.n.toLocaleString()} · MAD: ${soS.mad.toFixed(4)} · p-value: ${pct(soS.pValue)}</p>
+    <table class="fr-table"><thead><tr><th>Digit</th><th>Expected %</th><th>Actual %</th><th>Count</th><th>Deviation</th></tr></thead><tbody>`;
+  r.secondOrder.series.forEach(row => {
+    const anomaly = Math.abs(row.dev) > 0.02;
+    html += `<tr class="${anomaly?'fr-anomaly':''}"><td>${row.key}</td><td>${(row.expected*100).toFixed(2)}%</td><td>${(row.actual*100).toFixed(2)}%</td><td>${row.count.toLocaleString()}</td><td>${row.dev>=0?'+':''}${(row.dev*100).toFixed(2)}%</td></tr>`;
+  });
+  html += `</tbody></table></div>`;
+
+  return html;
+}
+
+document.getElementById('fullReportBtn').addEventListener('click', () => {
+  if(!lastResult) return;
+  const oldTitle = document.title;
+  const { firm, client } = fillLetterheadForPrint();
+  if(firm || client) document.title = `${client || 'Engagement'} — Full CAAT Report — ${firm || ''}`;
+  document.getElementById('fullReportContainer').innerHTML = buildFullReportHTML();
+  document.body.classList.add('full-report-mode');
+  window.print();
+  document.body.classList.remove('full-report-mode');
+  document.title = oldTitle;
+});
+
+document.getElementById('exportCsvBtn').addEventListener('click', () => {
+  if(!lastResult) return;
+  const series = seriesFor(currentMode);
+  const s = lastResult.stats[currentMode];
+  const rows = [
+    [`LedgerPrint — ${MODE_LABELS[currentMode]} test`],
+    [`Entries tested: ${lastResult.n}`],
+    [`Verdict: ${s.conformity}`],
+    [`MAD: ${s.mad.toFixed(4)}  Chi-square: ${s.chi.toFixed(2)}  p-value: ${s.pValue < 0.0001 ? '<0.0001' : s.pValue.toFixed(4)}`],
+    [],
+    ['Digit/Bucket','Expected %','Actual %','Count','Deviation %']
+  ];
+  series.forEach(row => {
+    rows.push([row.key, (row.expected*100).toFixed(4), (row.actual*100).toFixed(4), row.count, (row.dev*100).toFixed(4)]);
+  });
+  const csv = rows.map(r => r.map(v => `"${String(v).replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `ledgerprint-${currentMode}-results.csv`;
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+});
+
+document.getElementById('resetBtn').addEventListener('click', () => {
+  parsedRows = null;
+  filenameEl.textContent = '';
+  fileInput.value = '';
+  picker.classList.remove('show');
+  runBtn.disabled = true;
+  document.getElementById('results').classList.remove('show');
+  document.getElementById('sequenceSection').style.display = 'none';
+  document.getElementById('seqResult').style.display = 'none';
+  document.getElementById('sampNote').textContent = 'Load a file above (section 02) to pull an actual sample; otherwise use the sample size and interval above with your own selection method.';
+  document.getElementById('sampTableWrap').style.display = 'none';
+  document.getElementById('sampExportWrap').style.display = 'none';
+  document.getElementById('riskResult').style.display = 'none';
+  document.getElementById('riskTableWrap').style.display = 'none';
+  document.getElementById('riskExportWrap').style.display = 'none';
+  document.getElementById('pullSampleBtn').disabled = true;
+  document.getElementById('pullSampleBtn').title = 'Load a file in section 02 first — this pulls the sample from your loaded data.';
+  document.getElementById('findRiskBtn').disabled = true;
+  document.getElementById('findRiskBtn').title = 'Load a file in section 02 first — this scans your loaded data for risk signals.';
+  document.getElementById('sampValueCol').innerHTML = '<option value="">— load a file in section 02 first —</option>';
+  document.getElementById('sampDateCol').innerHTML = '<option value="">— none —</option>';
+  lastSampleSelections = null;
+  lastRiskSelections = null;
+  selectedRowsSet = new Set();
+  window.scrollTo({top:0, behavior:'smooth'});
+});
+
+// =================================================================
+// Module: Document number sequence / gap test
+// Extracts the numeric portion of a document reference (handling
+// prefixes/suffixes like "INV-10234" or "PV/2025/00123"), groups by
+// the non-numeric part, and within each group flags missing numbers
+// in the run and numbers that repeat — a standard completeness test
+// (this is the "pinpoint outliers, gaps and duplicates" step every
+// commercial CAAT suite runs before sampling).
+// =================================================================
+let lastSeqResult = null;
+
+function parseSeqRef(raw){
+  const s = String(raw ?? '').trim();
+  if(!s) return null;
+  const m = s.match(/^(\D*?)(\d+)(\D*)$/);
+  if(!m) return null;
+  return { prefix: m[1] + '…' + m[3], num: parseInt(m[2], 10), raw: s, padLen: m[2].length };
+}
+
+function runSequenceCheck(){
+  const col = document.getElementById('seqColSelect').value;
+  if(!parsedRows || !col) return;
+
+  const parsed = [];
+  parsedRows.forEach(row => {
+    const p = parseSeqRef(row[col]);
+    if(p) parsed.push({ ...p, row });
+  });
+
+  if(parsed.length < 5){
+    alert('Need at least 5 recognizable document numbers in this column to run a sequence check.');
+    return;
+  }
+
+  const groups = {};
+  parsed.forEach(p => (groups[p.prefix] = groups[p.prefix] || []).push(p));
+
+  const groupResults = Object.keys(groups).map(prefix => {
+    const items = groups[prefix];
+    const byNum = {};
+    items.forEach(it => (byNum[it.num] = byNum[it.num] || []).push(it));
+    const nums = Object.keys(byNum).map(Number).sort((a,b) => a-b);
+    const min = nums[0], max = nums[nums.length-1];
+    const expected = max - min + 1;
+    const missing = [];
+    if(expected <= 20000){ // guard against runaway ranges from misdetected columns
+      for(let n = min; n <= max; n++){ if(!byNum[n]) missing.push(n); }
+    }
+    const duplicates = nums.filter(n => byNum[n].length > 1).map(n => ({ num: n, count: byNum[n].length, items: byNum[n] }));
+    return {
+      prefix, items, nums, min, max, expected,
+      actualUnique: nums.length,
+      missing, duplicates,
+      rangeTooLarge: expected > 20000,
+      flagged: missing.length > 0 || duplicates.length > 0
+    };
+  }).sort((a,b) => (b.missing.length + b.duplicates.length) - (a.missing.length + a.duplicates.length));
+
+  lastSeqResult = groupResults;
+  renderSequenceResults();
+}
+
+function renderSequenceResults(){
+  const groupResults = lastSeqResult;
+  const anyFlag = groupResults.some(g => g.flagged);
+  const totalMissing = groupResults.reduce((s,g) => s + g.missing.length, 0);
+  const totalDup = groupResults.reduce((s,g) => s + g.duplicates.length, 0);
+
+  const verdict = document.getElementById('seqVerdict');
+  verdict.classList.toggle('flagged', anyFlag);
+  document.getElementById('seqMark').textContent = anyFlag ? 'FLAG' : 'PASS';
+  document.getElementById('seqTitle').textContent = anyFlag
+    ? `${totalMissing.toLocaleString()} missing and ${totalDup.toLocaleString()} duplicated number(s) found`
+    : 'No gaps or duplicates found';
+  document.getElementById('seqSub').textContent = anyFlag
+    ? 'Missing numbers can indicate unrecorded or deleted transactions; duplicated numbers can indicate double-counted or re-used documents. Both warrant follow-up.'
+    : `Across ${groupResults.length} series, every document number in range was present exactly once.`;
+
+  const body = document.getElementById('seqBody');
+  body.innerHTML = '';
+  groupResults.forEach(g => {
+    const tr = document.createElement('tr');
+    tr.classList.add('row-clickable');
+    if(g.flagged) tr.classList.add('anomaly');
+    const rangeTxt = g.rangeTooLarge ? `${g.min.toLocaleString()}–${g.max.toLocaleString()} (range too wide to scan)` : `${g.min.toLocaleString()}–${g.max.toLocaleString()}`;
+    tr.innerHTML = `
+      <td>${escapeHtml(g.prefix)}</td>
+      <td>${rangeTxt}</td>
+      <td>${g.rangeTooLarge ? '—' : g.expected.toLocaleString()}</td>
+      <td>${g.actualUnique.toLocaleString()}</td>
+      <td>${g.missing.length.toLocaleString()}</td>
+      <td>${g.duplicates.length.toLocaleString()}</td>
+    `;
+    tr.addEventListener('click', () => {
+      const dupRecords = g.duplicates.flatMap(d => d.items.map(it => it.row));
+      const missingPreview = g.missing.slice(0, 200).join(', ') + (g.missing.length > 200 ? ` … (+${g.missing.length-200} more)` : '');
+      if(dupRecords.length){
+        openDrilldown(g.duplicates.flatMap(d => d.items), `Series: ${g.prefix}`, `Duplicated numbers: ${g.duplicates.map(d=>d.num).join(', ')}. Missing numbers: ${g.missing.length ? missingPreview : 'none'}.`);
+      } else if(g.missing.length){
+        alert(`Series ${g.prefix} — missing number(s):\n\n${missingPreview}`);
+      }
+    });
+    body.appendChild(tr);
+  });
+
+  document.getElementById('seqResult').style.display = 'block';
+}
+
+document.getElementById('seqRunBtn').addEventListener('click', runSequenceCheck);
+
+// =================================================================
+// Module: Sample size calculator (monetary unit sampling)
+// Standard Poisson reliability-factor table for a zero-expected-
+// misstatement MUS plan (the table behind most firm sampling
+// worksheets). When an expected misstatement is entered, a simple
+// 1.5x expansion factor is applied — this is a common rule-of-thumb
+// approximation, not a precise non-zero-error formula, and is
+// labeled as such in the UI.
+// =================================================================
+const MUS_RELIABILITY_FACTORS = { '99':4.61, '95':3.00, '90':2.31, '85':1.90, '80':1.61, '70':1.21, '60':0.92, '50':0.70 };
+let lastSample = null;
+
+document.getElementById('calcSampleBtn').addEventListener('click', () => {
+  const popValue = parseFloat(document.getElementById('fPopValue').value);
+  const confidence = document.getElementById('fConfidence').value;
+  const tolerable = parseFloat(document.getElementById('fTolerable').value);
+  const expected = parseFloat(document.getElementById('fExpected').value) || 0;
+
+  if(!(popValue > 0) || !(tolerable > 0)){
+    alert('Enter a population value and a tolerable misstatement greater than zero.');
+    return;
+  }
+  if(expected >= tolerable){
+    alert('Expected misstatement should be less than tolerable misstatement.');
+    return;
+  }
+
+  const reliability = MUS_RELIABILITY_FACTORS[confidence];
+  const expansionFactor = 1.5;
+  const adjustedTolerable = tolerable - (expected * expansionFactor);
+  const basis = expected > 0 ? `Non-zero expected misstatement (×${expansionFactor} expansion — approximation)` : 'Zero expected misstatement (Poisson)';
+
+  if(adjustedTolerable <= 0){
+    alert('Expected misstatement is too high relative to tolerable misstatement for this approximation — reduce expected misstatement or increase tolerable misstatement.');
+    return;
+  }
+
+  const n = Math.max(1, Math.ceil((popValue * reliability) / adjustedTolerable));
+  const interval = popValue / n;
+
+  lastSample = { popValue, n, interval, reliability, confidence };
+
+  document.getElementById('sampReliability').textContent = reliability.toFixed(2);
+  document.getElementById('sampSize').textContent = n.toLocaleString();
+  document.getElementById('sampInterval').textContent = interval.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('sampBasis').textContent = basis;
+  document.getElementById('sampleResult').style.display = 'block';
+});
+
+// =================================================================
+// Risk scoring engine — shared by the statistical sample (to annotate
+// rows already selected) and the "risk-based additions" list (to find
+// high-risk items the statistical sample didn't happen to pick).
+// This is a simple, transparent heuristic scorer, not a machine-
+// learning model: each signal is auditable back to a plain rule.
+// =================================================================
+function parseFlexibleDate(raw){
+  if(raw == null || raw === '') return null;
+  if(raw instanceof Date && !isNaN(raw)) return raw;
+  if(typeof raw === 'number' && raw > 20000 && raw < 60000){
+    const d = new Date(Math.round((raw - 25569) * 86400 * 1000));
+    if(!isNaN(d)) return d;
+  }
+  const s = String(raw).trim();
+  let d = new Date(s);
+  if(!isNaN(d)) return d;
+  const m = s.match(/^(\d{1,2})[\/\-.](\d{1,2})[\/\-.](\d{2,4})$/);
+  if(m){
+    let [, a, b, y] = m;
+    if(y.length === 2) y = (parseInt(y,10) > 50 ? '19' : '20') + y;
+    let day = parseInt(a,10), month = parseInt(b,10);
+    if(month > 12 && day <= 12){ [day, month] = [month, day]; }
+    d = new Date(parseInt(y,10), month - 1, day);
+    if(!isNaN(d)) return d;
+  }
+  return null;
+}
+function isNearMonthEnd(d, n=3){
+  const lastDay = new Date(d.getFullYear(), d.getMonth()+1, 0).getDate();
+  return d.getDate() > lastDay - n;
+}
+
+function computeRiskPopulation(valueCol, dateCol){
+  const items = [];
+  parsedRows.forEach(row => {
+    const v = parseFloat(String(row[valueCol]).replace(/[,$\s]/g,''));
+    if(isNaN(v) || v <= 0) return;
+    const date = dateCol ? parseFlexibleDate(row[dateCol]) : null;
+    items.push({ row, value: v, date });
+  });
+  if(!items.length) return items;
+
+  const n = items.length;
+  const sortedVals = items.map(it => it.value).slice().sort((a,b) => a-b);
+  const p99Threshold = sortedVals[Math.max(0, Math.floor(n * 0.99) - 1)];
+
+  const freq = {};
+  items.forEach(it => { const k = it.value.toFixed(2); freq[k] = (freq[k]||0)+1; });
+  const dupThreshold = Math.max(5, Math.ceil(n * 0.01));
+
+  const thresholdEl = document.getElementById('fThreshold');
+  const thresholdVal = thresholdEl ? parseFloat(thresholdEl.value) : NaN;
+  const hasThreshold = !isNaN(thresholdVal) && thresholdVal > 0;
+
+  items.forEach(it => {
+    const reasons = [];
+    let score = 0;
+    const rk = trailingZeroBucket(Math.floor(it.value));
+    if(rk === 'Ends in 000+'){ score += 2; reasons.push('Round amount (000+)'); }
+    else if(rk === 'Ends in 00'){ score += 1; reasons.push('Round amount (00)'); }
+
+    if(it.value >= p99Threshold){ score += 2; reasons.push('Top 1% by value'); }
+
+    const dupCount = freq[it.value.toFixed(2)] || 0;
+    if(dupCount > dupThreshold){ score += 2; reasons.push(`Duplicated amount (${dupCount}×)`); }
+
+    if(hasThreshold && it.value < thresholdVal && it.value >= thresholdVal * 0.98){
+      score += 3; reasons.push('Just under entered threshold');
+    }
+
+    if(it.date){
+      const day = it.date.getDay();
+      if(day === 0 || day === 6){ score += 1; reasons.push('Weekend posting'); }
+      if(isNearMonthEnd(it.date)){ score += 1; reasons.push('Period-end posting'); }
+    }
+
+    it.riskScore = score;
+    it.riskReasons = reasons;
+  });
+
+  return items;
+}
+
+let lastSampleSelections = null;
+let selectedRowsSet = new Set();
+
+document.getElementById('pullSampleBtn').addEventListener('click', () => {
+  const sampNote = document.getElementById('sampNote');
+  if(!lastSample){
+    sampNote.textContent = '⚠ Click "Calculate sample size" above first — the sample is pulled based on that result.';
+    sampNote.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  if(!parsedRows){
+    sampNote.textContent = '⚠ Load a file in section 02 first — the sample is pulled from your loaded data.';
+    sampNote.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+  const col = document.getElementById('sampValueCol').value;
+  const dateCol = document.getElementById('sampDateCol').value;
+
+  const items = computeRiskPopulation(col, dateCol);
+  if(!items.length){
+    sampNote.textContent = '⚠ No positive numeric values found in that column. Pick a different "column to sample from" above.';
+    sampNote.scrollIntoView({behavior:'smooth', block:'center'});
+    return;
+  }
+
+  const total = items.reduce((s,it) => s+it.value, 0);
+  const interval = total / lastSample.n;
+  const start = Math.random() * interval;
+
+  let cumulative = 0;
+  const selections = [];
+  let itemIdx = 0;
+  for(let k = 0; k < lastSample.n; k++){
+    const target = start + k * interval;
+    while(itemIdx < items.length - 1 && cumulative + items[itemIdx].value < target){
+      cumulative += items[itemIdx].value;
+      itemIdx++;
+    }
+    if(itemIdx >= items.length) break;
+    selections.push({ point: target, item: items[itemIdx], cumulative: cumulative + items[itemIdx].value });
+  }
+
+  // De-duplicate in case a single high-value item is hit by more than one sampling point.
+  const seen = new Set();
+  const uniqueSelections = selections.filter(s => {
+    if(seen.has(s.item)) return false;
+    seen.add(s.item);
+    return true;
+  });
+
+  const body = document.getElementById('sampBody');
+  body.innerHTML = '';
+  uniqueSelections.forEach((s, i) => {
+    const tr = document.createElement('tr');
+    const flagTxt = s.item.riskReasons.length ? s.item.riskReasons.join(', ') : '—';
+    tr.innerHTML = `<td>${i+1}</td><td>${s.point.toLocaleString(undefined,{maximumFractionDigits:0})}</td><td>${s.item.value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${s.cumulative.toLocaleString(undefined,{maximumFractionDigits:0})}</td><td style="text-align:left;font-size:11px;">${escapeHtml(flagTxt)}</td>`;
+    body.appendChild(tr);
+  });
+
+  lastSampleSelections = uniqueSelections;
+  selectedRowsSet = new Set(uniqueSelections.map(s => s.item.row));
+  document.getElementById('sampTableWrap').style.display = 'block';
+  document.getElementById('sampExportWrap').style.display = 'flex';
+  document.getElementById('sampNote').textContent = `${uniqueSelections.length.toLocaleString()} item(s) selected from a population value of ${total.toLocaleString(undefined,{maximumFractionDigits:0})} using systematic MUS selection (random start). Re-run for a different random start.`;
+  document.getElementById('riskResult').style.display = 'block';
+});
+
+document.getElementById('sampExportBtn').addEventListener('click', () => {
+  if(!lastSampleSelections || !lastSampleSelections.length) return;
+  const rows = [['#','Sampling point','Amount','Risk flags', ...headers]];
+  lastSampleSelections.forEach((s, i) => {
+    rows.push([i+1, s.point.toFixed(2), s.item.value.toFixed(2), s.item.riskReasons.join('; '), ...headers.map(h => s.item.row[h])]);
+  });
+  downloadCsv(rows, 'ledgerprint-mus-sample.csv');
+});
+
+// ---------------- risk-based additions ----------------
+let lastRiskSelections = null;
+
+document.getElementById('findRiskBtn').addEventListener('click', () => {
+  if(!parsedRows){ alert('Load a file in section 02 first.'); return; }
+  const col = document.getElementById('sampValueCol').value;
+  const dateCol = document.getElementById('sampDateCol').value;
+  const topN = Math.max(1, parseInt(document.getElementById('riskTopN').value, 10) || 15);
+
+  const items = computeRiskPopulation(col, dateCol);
+  if(!items.length){ alert('No positive numeric values found in that column.'); return; }
+
+  const candidates = items
+    .filter(it => it.riskScore > 0 && !selectedRowsSet.has(it.row))
+    .sort((a,b) => b.riskScore - a.riskScore)
+    .slice(0, topN);
+
+  lastRiskSelections = candidates;
+
+  const body = document.getElementById('riskBody');
+  body.innerHTML = '';
+  if(!candidates.length){
+    body.innerHTML = '<tr><td colspan="3" style="color:var(--ink-soft);">No additional risk signals found outside the statistical sample.</td></tr>';
+  } else {
+    candidates.forEach(it => {
+      const tr = document.createElement('tr');
+      tr.innerHTML = `<td>${it.value.toLocaleString(undefined,{minimumFractionDigits:2,maximumFractionDigits:2})}</td><td>${it.riskScore}</td><td style="text-align:left;font-size:11px;">${escapeHtml(it.riskReasons.join(', '))}</td>`;
+      body.appendChild(tr);
+    });
+  }
+
+  document.getElementById('riskTableWrap').style.display = 'block';
+  document.getElementById('riskExportWrap').style.display = candidates.length ? 'flex' : 'none';
+  document.getElementById('riskNote').textContent = candidates.length
+    ? `${candidates.length.toLocaleString()} risk-based item(s) found beyond the ${lastSampleSelections ? lastSampleSelections.length.toLocaleString() : '0'} in the statistical sample above.${dateCol ? '' : ' Pick a date column above to also catch weekend/period-end postings.'}`
+    : (dateCol ? '' : 'Tip: pick a date column above to also catch weekend/period-end postings.');
+});
+
+document.getElementById('riskExportBtn').addEventListener('click', () => {
+  if(!lastRiskSelections || !lastRiskSelections.length) return;
+  const rows = [['Amount','Risk score','Why flagged', ...headers]];
+  lastRiskSelections.forEach(it => {
+    rows.push([it.value.toFixed(2), it.riskScore, it.riskReasons.join('; '), ...headers.map(h => it.row[h])]);
+  });
+  downloadCsv(rows, 'ledgerprint-risk-based-selections.csv');
+});
+
+document.getElementById('combinedExportBtn').addEventListener('click', () => {
+  const statRows = lastSampleSelections || [];
+  const riskRows = lastRiskSelections || [];
+  if(!statRows.length && !riskRows.length){ alert('Pull a statistical sample and/or find risk-based items first.'); return; }
+  const rows = [['Source','Amount','Detail', ...headers]];
+  statRows.forEach(s => rows.push(['Statistical (MUS)', s.item.value.toFixed(2), s.item.riskReasons.join('; ') || '—', ...headers.map(h => s.item.row[h])]));
+  riskRows.forEach(it => rows.push(['Risk-based', it.value.toFixed(2), it.riskReasons.join('; '), ...headers.map(h => it.row[h])]));
+  downloadCsv(rows, 'ledgerprint-combined-sample.csv');
+});
+
+function downloadCsv(rows, filename){
+  const csv = rows.map(r => r.map(v => `"${String(v ?? '').replace(/"/g,'""')}"`).join(',')).join('\r\n');
+  const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
+// =================================================================
+// Module: Materiality calculator (planning)
+// =================================================================
+document.getElementById('matBenchmark').addEventListener('change', (e) => {
+  const pct = e.target.selectedOptions[0].dataset.pct;
+  if(pct) document.getElementById('matPct').value = pct;
+});
+
+document.getElementById('calcMaterialityBtn').addEventListener('click', () => {
+  const benchmarkSel = document.getElementById('matBenchmark');
+  const benchmarkValue = parseFloat(document.getElementById('matBenchmarkValue').value);
+  const pct = parseFloat(document.getElementById('matPct').value);
+  const perfPct = parseFloat(document.getElementById('matPerfPct').value);
+  const trivialPct = parseFloat(document.getElementById('matTrivialPct').value);
+
+  if(!(benchmarkValue > 0) || !(pct > 0)){
+    alert('Enter a positive benchmark value and planning materiality percentage.');
+    return;
+  }
+
+  const planning = benchmarkValue * (pct / 100);
+  const performance = planning * ((perfPct || 75) / 100);
+  const trivial = planning * ((trivialPct || 5) / 100);
+
+  document.getElementById('matPlanning').textContent = planning.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('matPerformance').textContent = performance.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('matTrivial').textContent = trivial.toLocaleString(undefined,{maximumFractionDigits:0});
+  document.getElementById('matBenchmarkLabel').textContent = `${benchmarkSel.selectedOptions[0].textContent.split(' (')[0]} × ${pct}%`;
+  document.getElementById('materialityResult').style.display = 'block';
+
+  lastMateriality = { planning, performance, trivial };
+});
+
+let lastMateriality = null;
+document.getElementById('matToSamplingBtn').addEventListener('click', () => {
+  if(!lastMateriality) return;
+  document.getElementById('fTolerable').value = Math.round(lastMateriality.planning);
+  document.getElementById('samplingSection').scrollIntoView({behavior:'smooth', block:'start'});
+  const btn = document.getElementById('calcSampleBtn');
+  btn.style.transition = 'background .2s ease';
+  const origBg = btn.style.background;
+  btn.style.background = 'var(--gold)';
+  setTimeout(() => { btn.style.background = origBg; }, 900);
+});
+
+// =================================================================
+// Module: Ratio & trend analysis (analytical review)
+// Manual current/prior entry — deliberately independent of the
+// uploaded transaction file, since trial balance formats vary too
+// much to parse reliably. Line items are the standard set used in
+// horizontal/vertical analysis during planning and completion review.
+// =================================================================
+const RATIO_LINE_ITEMS = [
+  { key:'revenue', label:'Revenue / turnover' },
+  { key:'cogs', label:'Cost of sales / COGS' },
+  { key:'opex', label:'Operating expenses' },
+  { key:'netProfit', label:'Net profit before tax' },
+  { key:'totalAssets', label:'Total assets' },
+  { key:'currentAssets', label:'Current assets' },
+  { key:'inventory', label:'Inventory' },
+  { key:'receivables', label:'Trade receivables' },
+  { key:'currentLiabilities', label:'Current liabilities' },
+  { key:'payables', label:'Trade payables' },
+  { key:'totalLiabilities', label:'Total liabilities' },
+  { key:'equity', label:'Total equity' }
+];
+
+function renderRatioInputRows(){
+  const body = document.getElementById('ratioBody');
+  body.innerHTML = '';
+  RATIO_LINE_ITEMS.forEach(li => {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="text-align:left;">${li.label}</td>
+      <td><input type="number" class="ratio-input" id="ri_${li.key}_c" step="any" placeholder="0"></td>
+      <td><input type="number" class="ratio-input" id="ri_${li.key}_p" step="any" placeholder="0"></td>
+    `;
+    body.appendChild(tr);
+  });
+}
+renderRatioInputRows();
+
+function ratioVal(key, period){
+  const v = parseFloat(document.getElementById(`ri_${key}_${period}`).value);
+  return isNaN(v) ? 0 : v;
+}
+function pctChange(cur, prior){
+  if(prior === 0) return cur === 0 ? 0 : null;
+  return ((cur - prior) / Math.abs(prior)) * 100;
+}
+function safeDiv(a, b){
+  if(!b) return null;
+  return a / b;
+}
+function fmtPct(v){ return v === null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%'; }
+function fmtNum(v){ return v === null ? '—' : v.toLocaleString(undefined,{maximumFractionDigits:0}); }
+function fmtRatio(v, decimals=2){ return v === null ? '—' : v.toFixed(decimals); }
+
+document.getElementById('calcRatioBtn').addEventListener('click', () => {
+  const threshold = parseFloat(document.getElementById('ratioVarThreshold').value) || 15;
+  const vals = {};
+  RATIO_LINE_ITEMS.forEach(li => {
+    vals[li.key] = { c: ratioVal(li.key,'c'), p: ratioVal(li.key,'p') };
+  });
+  // Derived line item: gross profit
+  vals.grossProfit = { c: vals.revenue.c - vals.cogs.c, p: vals.revenue.p - vals.cogs.p };
+
+  const movementItems = [...RATIO_LINE_ITEMS, { key:'grossProfit', label:'Gross profit (derived)' }];
+  const moveBody = document.getElementById('ratioMovementBody');
+  moveBody.innerHTML = '';
+  movementItems.forEach(li => {
+    const { c, p } = vals[li.key];
+    const change = c - p;
+    const pct = pctChange(c, p);
+    const flagged = pct !== null && Math.abs(pct) >= threshold;
+    const tr = document.createElement('tr');
+    if(flagged) tr.classList.add('anomaly');
+    tr.innerHTML = `<td style="text-align:left;">${li.label}</td><td>${fmtNum(c)}</td><td>${fmtNum(p)}</td><td>${fmtNum(change)}</td><td>${fmtPct(pct)}</td>`;
+    moveBody.appendChild(tr);
+  });
+
+  const ratios = [
+    { label:'Gross profit margin', c: safeDiv(vals.grossProfit.c, vals.revenue.c), p: safeDiv(vals.grossProfit.p, vals.revenue.p), pct:true },
+    { label:'Net profit margin', c: safeDiv(vals.netProfit.c, vals.revenue.c), p: safeDiv(vals.netProfit.p, vals.revenue.p), pct:true },
+    { label:'Return on assets', c: safeDiv(vals.netProfit.c, vals.totalAssets.c), p: safeDiv(vals.netProfit.p, vals.totalAssets.p), pct:true },
+    { label:'Current ratio', c: safeDiv(vals.currentAssets.c, vals.currentLiabilities.c), p: safeDiv(vals.currentAssets.p, vals.currentLiabilities.p) },
+    { label:'Quick ratio', c: safeDiv(vals.currentAssets.c - vals.inventory.c, vals.currentLiabilities.c), p: safeDiv(vals.currentAssets.p - vals.inventory.p, vals.currentLiabilities.p) },
+    { label:'Receivable days', c: safeDiv(vals.receivables.c, vals.revenue.c) !== null ? safeDiv(vals.receivables.c, vals.revenue.c)*365 : null, p: safeDiv(vals.receivables.p, vals.revenue.p) !== null ? safeDiv(vals.receivables.p, vals.revenue.p)*365 : null, days:true },
+    { label:'Payable days', c: safeDiv(vals.payables.c, vals.cogs.c) !== null ? safeDiv(vals.payables.c, vals.cogs.c)*365 : null, p: safeDiv(vals.payables.p, vals.cogs.p) !== null ? safeDiv(vals.payables.p, vals.cogs.p)*365 : null, days:true },
+    { label:'Inventory days', c: safeDiv(vals.inventory.c, vals.cogs.c) !== null ? safeDiv(vals.inventory.c, vals.cogs.c)*365 : null, p: safeDiv(vals.inventory.p, vals.cogs.p) !== null ? safeDiv(vals.inventory.p, vals.cogs.p)*365 : null, days:true },
+    { label:'Debt to equity', c: safeDiv(vals.totalLiabilities.c, vals.equity.c), p: safeDiv(vals.totalLiabilities.p, vals.equity.p) }
+  ];
+
+  const ratioBody = document.getElementById('ratioResultBody');
+  ratioBody.innerHTML = '';
+  ratios.forEach(r => {
+    const pct = (r.c !== null && r.p !== null) ? pctChange(r.c, r.p) : null;
+    const flagged = pct !== null && Math.abs(pct) >= threshold;
+    const fmt = v => v === null ? '—' : (r.pct ? (v*100).toFixed(1)+'%' : r.days ? v.toFixed(0)+'d' : v.toFixed(2));
+    const tr = document.createElement('tr');
+    if(flagged) tr.classList.add('anomaly');
+    tr.innerHTML = `<td style="text-align:left;">${r.label}</td><td>${fmt(r.c)}</td><td>${fmt(r.p)}</td><td>${fmtPct(pct)}</td>`;
+    ratioBody.appendChild(tr);
+  });
+
+  document.getElementById('ratioResult').style.display = 'block';
+});
+</script>
+</body>
+</html>
