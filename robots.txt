@@ -24,4 +24,4 @@ Allow: /
 User-agent: Applebot-Extended
 Allow: /
 
-Sitemap: https://https://682f3b02-ledgerprint.muhammadfaisalfca.workers.dev/sitemap.xml
+Sitemap: https://https://ledgerprint.pages.dev/sitemap.xml
