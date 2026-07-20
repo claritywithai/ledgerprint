@@ -23,5 +23,5 @@ Small and mid-sized audit firms, sole practitioners, and internal audit teams wh
 - Every test result includes an explicit disclaimer that digital analysis is a risk indicator under ISA 240, not proof of fraud on its own.
 
 ## Links
-- [LedgerPrint tool](https://ledgerprint.pages.dev/): the live application
+- [LedgerPrint tool](https://www.claritywithai.org/tools/ledgerprint): the live application
 - [Muhammad Faisal Gurmani / Clarity With AI](https://www.claritywithai.org): creator's site, AI education for finance and accounting professionals
